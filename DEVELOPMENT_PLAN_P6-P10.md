@@ -1,6 +1,7 @@
 # P6–P10 阶段规划 — 用户权限 / 测试管理 / 数据统计 / 站内助手 / 性能·插件·版本
 
-> 版本: v1.1（2026-09-04 确认范围与边界；2026-09-05 P10 并入）
+> 版本: v1.3（2026-09-04 确认范围与边界；2026-09-05 P10 并入；2026-09-07 P6-1~P6-5
+> 实现状态 + P6 暂记验收通过 + 13.6 后置增补「项目可见性两层 + 权限申请审批流」）
 > 归属: 本文件是 `DEVELOPMENT_PLAN.md` 的阶段扩编。四个新阶段插在 P5（MCP）之后、
 > 原 P6（性能/插件/版本，**已顺延为 P10**）之前；**P10 全章于 2026-09-05 自主计划
 > 十四章并入本文件**。主文档只保留编号变更与指针，完整范围、边界、迁移、路由、
@@ -171,11 +172,120 @@ GET    /api/v1/projects/:id/audit-logs        requireProjectAdmin；最近 50 �
 
 | 步 | 内容 | 产出 |
 | --- | --- | --- |
-| P6-1 | 迁移 051 + `requireProjectAdmin` + `myRole` 下发 | `pnpm check` 过，既有路由零回归 |
-| P6-2 | 用户 CRUD / 禁用 / 重置密码 / 审计动作与读接口 | 系统管理两 tab 可用 |
-| P6-3 | 邀请码签发/消费 + `/register` + 强制改密 | 第二个账号能进来 |
-| P6-4 | 成员 CRUD + 前端成员页 + `useMyRole` 隐藏走查 | viewer/developer/admin 三级界面分叉 |
-| P6-5 | JWT 过期 + pwdEpoch + 401/403 拦截器 | 改密后旧 token 立即失效 |
+| P6-1 | 迁移 051 + `requireProjectAdmin` + `myRole` 下发 — **已实现**（2026-09-07） | `pnpm check` 过，既有路由零回归 |
+| P6-2 | 用户 CRUD / 禁用 / 重置密码 / 审计动作与读接口 — **已实现**（2026-09-07） | 系统管理两 tab 可用 |
+| P6-3 | 邀请码签发/消费 + `/register` + 强制改密 — **已实现**（2026-09-07） | 第二个账号能进来 |
+| P6-4 | 成员 CRUD + 前端成员页 + `useMyRole` 隐藏走查 — **已实现**（2026-09-07） | viewer/developer/admin 三级界面分叉 |
+| P6-5 | JWT 过期 + pwdEpoch + 401/403 拦截器 — **已实现**（2026-09-07） | 改密后旧 token 立即失效 |
+
+> **P6-1 实现状态（2026-09-07）**：迁移 051 落地（users 三列 + `invitations` +
+> `user_project_roles.granted_by/granted_at`）；`rbac.ts` 重构出 `myRoleInProject` 单点
+> 角色查询，`requireProjectAccess` 返回值增 `myRole`（签名兼容，80+ 调用点零改动），
+> 新增 `requireProjectAdmin` 并即挂两类既有路由（项目设置 PUT / 项目删除 DELETE，
+> 边界 4 的第三类「成员管理」待 P6-4 建路由时挂）；`myRole` 随 `GET /projects/:id`
+> 与项目列表（`queryProjectMetrics`，dashboard 聚合同步受益）下发。**一处词汇决策**：
+> `myRole` 用 DB 值 `project_admin`（计划原文写的是「admin」），与成员 CRUD 的 role
+> 词汇、DB CHECK 保持同一套，避免前端再长一层映射；`system_admin` 照计划短路。
+>
+> **P6-2 实现状态（2026-09-07）**：后端 `routes/systemUsers.ts`——`GET/POST
+> /system/users`（列表 keyword/分页 + 建号：初始密码 18 字节 base64url 只在响应出现
+> 一次、`must_change_password` 置位）、`PATCH /system/users/:userId`（name / status /
+> isSystemAdmin，partial）、`POST …/reset-password`（同明文纪律 + 强制改密）、
+> `GET /system/audit-logs`（分页 + action/project 筛选，LEFT JOIN email/name 快照）、
+> `GET /projects/:id/audit-logs`（`requireProjectAdmin`，最近 50 条——P6-4 成员页
+> 消费）。`AUDIT_ACTIONS` 扩到 17 动作（新增 user.create / disable / enable /
+> update_role / reset_password，detail 只放 email 与前后角色）；`models/types.ts`
+> 增 `ManagedUser` / `AuditLog` 与两个映射（哈希列不进管理查询）。**两处护栏**：
+> ① 不能禁用自己 / 不能摘自己的管理员旗 / 最后一个启用的系统管理员不能被降
+> （409，用户面的「最后一个 project_admin」纪律）；② 重置密码**不动 pwd_epoch**
+> ——那是 P6-5 的 JWT 失效机制，提前动会引入本批未实现的第二个判定端。前端
+> `GlobalApp.tsx` 的 `SystemTab` 增「用户」「审计日志」两 tab（非管理员不渲染），
+> `UsersPanel`（建号弹窗 + 初始密码 code-block + 禁用/启用确认 + 管理员旗就地开关
+> + 重置密码）与 `AuditLogsPanel`（action 筛选候选取自当前页出现过的动作、detail
+> 键值行渲染）落地，i18n 中英双语补齐，`.audit-detail` 进 design-system.css。
+>
+> **P6-3 实现状态（2026-09-07）**：邀请码通道与强制改密全套落地。后端：新
+> `lib/inviteAuth.ts`（第五次照抄 Token 形状：scrypt `salt:digest`、`apiinv_` 明文、
+> 前缀收窄候选、**不抽公共层**；差异点 = 7 天过期 + 单次使用）、`routes/invitations.ts`
+> （GET/POST `/system/invitations` + `POST …/:id/revoke`，全 `requireSystemAdmin`；
+> 签发明文码只在响应出现一次，audit 三动作 invite.create/revoke/consume、明文码绝不
+> 进 detail）；`routes/auth.ts` 增公开 `POST /auth/register`（**事务 + 带条件
+> UPDATE 原子消费**，并发双注册只有一个赢；过期 410 / 吊销 403 / 无效 401 / 已用
+> 409 分路报错；预分配角色行 `granted_by` 落签发人）与 `POST /auth/change-password`
+> （旧密码必验、清 `must_change_password`；**不动 pwd_epoch**——P6-5 的机制，提前
+> 动 = 无判定端的字段变更）；login 响应带 `mustChangePassword` + 写 `last_login_at`；
+> **`/auth/me` 同步带旗**（登录响应里的旗活不过一次刷新，读时从库里来，否则强制改密
+> 闸刷新即绕过）。前端：`Register.tsx`（Protected 之外，`?invite=` 预填、注册即登录、
+> 服务端分路 message 直接透传）、`ChangePassword.tsx` + `main.tsx` 的 `PasswordGate`
+> （`mustChangePassword` 为 true 时除改密页一律弹回；改密页自身在闸外，hydrate 从
+> me() 恢复旗）、`Login.tsx` **删掉 admin@local.test / admin123 预填** + 「使用邀请码
+> 注册」链接（`.login-card .form-note a` 用 accent）；`UsersPanel` 增邀请码区块
+> （签发一行：备注 + 预分配项目/角色（role 必须配项目，后端 400 前端禁按钮）+ 明文
+> 注册链接 code-block 只出现一次 + 列表（待使用/已使用/已吊销/已过期四态、被谁消费
+> 展示 email）+ 吊销确认）；authStore 增 `register`/`clearMustChangePassword`。
+> **一处词汇决策**：email 由注册人自报——计划 10.2 的 body 清单
+> `{invite, name, password}` 没有 email，但 `users.email NOT NULL UNIQUE` 且登录按
+> email 找行，没有 email 的账号登录不了；归属由签发人带外转交时目视判断（边界 2
+> 的原话），冲突 409 而不是枚举既有账号。
+>
+> **P6-4 实现状态（2026-09-07）**：成员 CRUD + 成员页 + 全站角色分叉落地。**零迁移**
+> ——051 的 `user_project_roles.granted_by/granted_at` 已就位。后端：新 `routes/members.ts`
+> 四条路由——`GET /projects/:id/members`（`requireProjectAccess` 读，viewer 可看；
+> JOIN users 读时快照 + 排序 project_admin→developer→viewer→email）、`POST`
+> （requireProjectAdmin，**upsert 语义**：ON CONFLICT 改角色，同一张码加两次不 409
+> ——审计动作叫 member.upsert 的原因）、`PATCH …/:userId`、`DELETE`；外加一条计划
+> API 清单之外的**候选搜索** `GET …/members/candidates?keyword=`（requireProjectAdmin、
+> 只回 id/email/name 三列、只 active、只非成员、上限 20——「搜索平台用户」选择器的
+> 数据源；不放宽 `/system/users`，那是全量管理面）。「最后一个 project_admin」闸
+> （门槛 8）：降级与移除先数其他 project_admin，数到 0 → 409/2003；POST 改角色同过
+> 此闸。审计 `AUDIT_ACTIONS` 增 member.upsert / member.remove（detail 只放 email 与
+> 前后角色）。前端：`api.ts` 增 ProjectMember/MemberCandidate 与五个成员 API +
+> Project/ProjectMetric 带 `myRole`；`projectStore` 存 `myRole`（null = 未加载，
+> 一律按无权限处理）；`hooks/useMyRole.ts` 三个判定（useMyRole / useCanWrite /
+> useCanManageProject——**三档不是两档**：developer 能建接口但看不到成员管理）；
+> `Members.tsx` 成员页（角色下拉就地改 + 添加成员防抖候选搜索 + 最近审计 50 条复用
+> `AuditLogsPanel` 提出的 `AuditDetail`；管理面只对 project_admin 渲染，页面对
+> viewer/developer 可读）；导航「成员与权限」落通用组 + `/members` 路由 + i18n 双语。
+> **全站隐藏走查**（边界 6「只藏入口不做禁用态、只藏入口不藏路由」）：viewer 藏——
+> 接口列表（新建/导入/勾选列/批量条/行内运行·复制·编辑·删除）、工作台（发送/保存/
+> 另存用例/复制/删除/⌘S/用例框行内操作/重跑/同步 tab）、环境（新建/编辑/删除/复制
+> + 抽屉保存）、公共脚本、流程（列表与画布加节点/运行/保存/节点抽屉调试与删除——
+> 抽出共享 `NodeDrawerActions`）、套件（新建/运行/编辑/删除/保存/⌘S/取消他人运行）、
+> 数据源（含 SQL 定义与测试连接）、Mock、CI 任务（新建/触发/编辑/删除/保存并触发/
+> 凭据就地创建）、告警渠道与规则、MCP Token 签发吊销、仓库用例树勾选执行、凭据页、
+> 报告分享创建/撤销、run 取消、调度面板全量入口。**developer 额外收敛到项目管理员**
+> （P6-1 已改后端守卫、本批补 UI）：默认环境选择器、明文记录开关、MCP 开关（项目
+> 设置写）。编辑器本体（表单/画布）对 viewer 保留——本地草稿存不回去，路由不藏。
+>
+> **P6-5 实现状态（2026-09-07）**：JWT 过期 + pwdEpoch + 401/403 拦截器全套落地。
+> **零迁移**——051 的 `pwd_epoch` 列已就位，`JWT_EXPIRES_IN` 是 env-only。后端：
+> `@fastify/jwt` 注册时挂全局 `sign.expiresIn`（`JWT_EXPIRES_IN` 默认 7d；只影响 auth
+> 路由的 jwtSign，产物直传的一次性 token 是 objectStore 自己的 HMAC、不走这里）；
+> `FastifyJWT` 类型加可选 `pwdEpoch`；新 `lib/auth.ts#signSessionToken` 单点（login /
+> register / change-password 三处共用，`expiresAt` 直接从签出的 token 解 `exp`——
+> 不自己再解析一遍时长字符串，两处来源迟早漂移）；`currentUser` 的 SELECT 带
+> `pwd_epoch`、**不等即 401**——判定端单一（它是全库唯一的 jwtVerify 点，rbac /
+> stream 全部经它），改一处全部路由生效。login 的旗查询并进主 SELECT（P6-5 起签
+> token 要带 epoch，不再值得单独发一次查询）。**两处自增收口**：`change-password`
+> 与管理员 `reset-password` 都 `pwd_epoch = pwd_epoch + 1`（P6-3 / P6-2「提前动 =
+> 无判定端的字段变更」的临时取舍就此结束）；改密响应**换发带新 epoch 的 token**——
+> 当前会话凭它无缝续命、其他设备上的旧会话全部下线，而不是把刚改完密的人踢去
+> 再登一次。前端：`api.ts` 补响应拦截器——401 清 token 带 `returnTo` 硬跳登录
+> （硬导航连内存 store 一起重置；不反向 import authStore——会与它 import api 成环）；
+> 403 顶部 `message` 提示无权限、**不跳转**（3 秒一条，防一页并发 403 弹五条叠着的
+> toast）。**公开页前缀对两个分支都豁免**：`/login`、`/register`（那里的 401/403 是
+> 「凭据不对 / 邀请码无效或被吊销」的领域语义，页面有自己的分路报错——重定向会把
+> 错误抹掉，全局 toast 又词不达意）与 `/share/*`（公开落地页，匿名访客不该被一枚
+> 过期 token 从公开报告页踢去登录）——401 只清不跳，403 不弹全局 toast。
+> `authStore` 的 `clearMustChangePassword` 被 `renewSession` 取代（换发
+> token 落地 + 清旗一体）；i18n 补 `errors.forbidden` 双语。**一处兼容决策**：缺
+> `pwdEpoch` claim 的存量 token 按 0 对齐（`pwd_epoch` 列缺省也是 0）——部署
+> P6-5 不强制存量会话全员重登；失效语义只对「之后的改密 / 重置」生效。
+>
+> **P6 验收结论（2026-09-07，暂记通过）**：P6-1 ~ P6-5 五个批次（迁移与守卫 / 用户
+> CRUD 与审计 / 邀请码与强制改密 / 成员管理与角色分叉 / JWT 过期与改密失效）用户
+> 验收暂记通过。后续使用中暴露的问题按 `issue_fix/` 流程记录处理（缺陷不入本计划，
+> 见主计划 Plan Tracking 纪律）。
 
 ### 10.5 验收门槛
 
@@ -740,6 +850,10 @@ session / token / function call**，链路是
 **新增范围**（用户 2026-09-04 确认）：**站内通知并入本阶段**——通知中心（铃铛小红点
 + 弹窗提醒）是助手壳的一部分；P6/P7 落地的成员变更、计划指派在此回补通知生产端。
 
+**后置增补之二**（用户 2026-09-07 提出）：**项目可见性两层 + 权限申请审批流**——非
+项目成员在项目列表**看得到**项目但**进不去**（发现层开放、内容层不变）；站内信与人物
+落地后，用审批流自助申请权限。取向与现状锚点见 13.6（记录取向，不排期）。
+
 **上游能力核对**（`智能体平台-第三方接入接口文档.md`，2026-09-04 引入）：
 
 | 9.8 的前置疑问 | 文档答案 |
@@ -901,6 +1015,35 @@ POST   /api/v1/notifications/read-all                   全部已读
 8. 同名用户头像相同；改名后头像不变；「换一个形象」只影响本人。
 9. `prefers-reduced-motion` 下无眨眼动画。
 10. 主线教程 5 步全程无「目标元素找不到」的卡死（找不到自动跳步）。
+
+### 13.6 后置增补：项目可见性两层 + 权限申请审批流（2026-09-07 提出，记录取向不排期）
+
+**现状锚点**：`queryProjectMetrics`（`dashboard.ts:33-38`）对非系统管理员用
+`EXISTS(user_project_roles)` 过滤——非成员在项目列表 / 数据看板 / 项目切换器**完全
+看不到**非成员项目（不是「看得到进不去」），URL 直达 `GET /projects/:id` 由
+`requireProjectAccess` 回 403。发现层的缺失正是动因：连项目存在都不知道，「找谁要
+权限」无从谈起——成员页展示管理员清单的前提是先进得了项目（P6-4 的产品理由只覆盖
+了已进项目的 viewer）。
+
+**取向（防止将来跑偏）**：
+
+1. **可见性拆两层，指标不随身份外泄**：项目身份（名称 / 描述）对全部登录用户可见；
+   接口数 / 通过率等指标仍只对成员计算与下发，看板聚合的分母不含非成员项目——
+   「看得到」买到的是发现，不是数据。
+2. **无权限落地页**：非成员 URL 直达项目时不再是裸 403——身份级端点回 200（项目名 +
+   管理员线索），前端渲染「无权限 + 申请入口」落地页。这是审批流的 UX 前置，也是
+   `requireProjectAccess` 之外唯一要开的口子。
+3. **审批流复用成员管理，不开第二条写路径**：新表 `access_requests`（project /
+   user / 建议角色 / status: pending·approved·rejected / handled_by / handled_at /
+   note）；**批准 = 现有成员 upsert**（`granted_by` 落审批人，`member.upsert` 审计
+   照旧），拒绝只记状态。P6-4 成员页的人工添加与 P6-3 邀请码通道照旧——审批流是
+   用户主动的自助通道，不是唯一通道。
+4. **触达靠站内信**（排在本节的原因）：新申请 → 通知全体 project_admin；审批结果 →
+   通知申请人。没有通知中心，审批流等于管理员靠刷页面发现申请，不如不做。
+5. **幂等**：同一 (project, user) 只允许一条 pending；被拒后可再申请（第一版不限流）。
+6. **实施时再定的开口**：申请是否带建议角色（管理员可改后批准）；非成员可见的管理员
+   线索到什么粒度（email / 仅姓名）；项目切换器是否列出带锁的非成员项目（倾向不列
+   ——切换器是「进入」的入口，目录页才是「发现」的入口）。
 
 ---
 
