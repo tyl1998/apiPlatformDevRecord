@@ -1,9 +1,15 @@
 # P6–P11 阶段规划 — 用户权限 / 测试管理 / 数据统计 / 站内助手 / 性能·插件·版本 / 资产归属
 
-> 版本: v1.4（2026-09-04 确认范围与边界；2026-09-05 P10 并入；2026-09-07 P6-1~P6-5
+> 版本: v1.5（2026-09-04 确认范围与边界；2026-09-05 P10 并入；2026-09-07 P6-1~P6-5
 > 实现状态 + P6 暂记验收通过 + 13.6 后置增补「项目可见性两层 + 权限申请审批流」；
 > 2026-09-07 P11 立项——资产归属（列级 + 审计级），见十六章；2026-09-09 P7-1~P7-7
-> 实现状态 + P7 验收通过——含验收期四轮反馈的口径修订与范围收缩，见十一章）
+> 实现状态 + P7 验收通过——含验收期四轮反馈的口径修订与范围收缩，见十一章；
+> 2026-09-09 P8 启动前核对——迁移编号顺延（P8 054 / P9 055 / P11 056，053 已被
+> P7 状态评审占用）与 P8-8 聚合子查询表数勘误（七张）；批次顺序与指标清单经现场
+> 核对不变，见 12.6 末注；同日第二轮范围增补——看板 Top 10 反向榜、资产面四读数、
+> TopN 扩六维（+流程/仓库用例）、进入项目默认页改数据统计，见边界 19–22；
+> 2026-09-10 P8-1~P8-8 全部实现 + **P8 暂记验收通过**——含验收期多轮反馈修复
+> 与 P8-8 两刀性能收口，见十二章 12.6 末尾实现状态）
 > 归属: 本文件是 `DEVELOPMENT_PLAN.md` 的阶段扩编。四个新阶段插在 P5（MCP）之后、
 > 原 P6（性能/插件/版本，**已顺延为 P10**）之前；**P10 全章于 2026-09-05 自主计划
 > 十四章并入本文件**；**P11 于 2026-09-07 立项并入本文件十六章**。主文档只保留
@@ -905,6 +911,13 @@ last_result`（P4 已有列，`035:102`）。**绝不回写**（照迁移 047 �
 >   endpoint 绑定行标注「不算自动化」（边界 10 的中间态：设计了但没自动化）。
 >   viewer 只读（无添加/删除按钮）。**新建用例不显示绑定区**——绑定挂在已存在
 >   的用例上，先保存拿 id。
+> - **绑定行点击跳转（2026-09-10 用户反馈落地）**：目标名变 `cell-link` 可点，
+>   四类目标复用现成深链各跳各的详情页——endpoint → 接口工作台、case →
+>   宿主接口工作台 `?case=`（`LINK_READ_SQL` 补 `target_endpoint_id` 读时
+>   列，mapper/前端类型同步加 `targetEndpointId`）、flow → 画布、repo_case →
+>   有报告出处跳 `pipeline-runs/:runId`（树上「最近任务」同款取舍）、无报告
+>   跳树页 `?keyword=case_key`。不可跳的行（目标已删 / case 宿主接口已删 /
+>   repo_case removed）名字仍是纯文本——不给一条点了 404 的链接。
 > - **绑定选择器四 tab**：接口（endpointsPaged 分页）/ 接口用例（projectCases
 >   按接口分组，SuiteMemberPicker 同款）/ 流程（平铺）/ 仓库用例（repoCases
 >   拍平，默认只回 active 行）。**点行即绑定**（逐条 POST、逐条反馈——绑定是
@@ -1127,7 +1140,8 @@ summary 是 24h 失败分布（`reports.ts:204`）。具体缺口：
 归因是用户填的一等数据（不是从 error 文本推定的读时分类）；自动归因经 MCP 由外部
 agent 写回。图表继续手写 SVG，提成可复用组件并补 hover/刻度/下钻。**
 
-**边界决策（18 项）**
+**边界决策（23 项；19–22 为 2026-09-09 第二轮增补，23 为同日第三轮；16/17 同日
+第四轮修订）**
 
 1. **P8-1 是纯收口步，先于一切新图表**（照 P5-2「重构独立成步」的先例）：三处口径
    全改 `passed/(passed+failed)`；趋势/汇总补 `detail_id <> id`；`includeRepo` 的一致性
@@ -1195,18 +1209,86 @@ agent 写回。图表继续手写 SVG，提成可复用组件并补 hover/刻度
     （非整数缩放下 SVG 文本发虚，`Trends.tsx:30-32` 的既有结论）。
 15. **不做图表缩放/刷选/图例交互**——时间窗由顶部时间选择器控制，两套控制会打架；
     图例只读（色块 + 名称）。
-16. **统计页不实时**：进入拉一次 + 手动刷新按钮。不接 SSE——统计是聚合读，接事件
-    流意味着每个终态重算聚合，把读页变订阅端。
-17. **不建汇总表/物化视图**（第一版）：全平台读时实时 SQL 是既定姿态，`execution_index`
-    上 `(project_id, created_at DESC)` 索引在（迁移 015/030）。90 天全局趋势先直查，
-    **实测单次 > 1.5s 才立项汇总**——物化视图带来「何时刷新/刷新失败/口径变更重建」
-    三个新问题，而冷数据该先走 P10 14.1 的归档分区。判据写死，不靠感觉。
-18. **看板扩展为「当下 + 变化」**：既有四个比率旁加 7 天 delta（**用百分点 pp 而不是
+16. **统计页不实时，但也不让页面干转**（2026-09-09 第四轮修订）：进入拉一次 + 手动
+    刷新按钮。不接 SSE——统计是聚合读，接事件流意味着每个终态重算聚合，把读页变
+    订阅端。两条体验防线：
+    - **服务端短 TTL 内存缓存（30s）**：全局聚合按「可见项目集哈希 + 窗口参数」缓存
+      30 秒，可见集相同的用户共享同一份；`/stats/*` 是聚合读、本就声明容忍 30s 陈旧。
+      第二个人进页面读缓存毫秒级返回。只在进程内存（Map），不进 Redis、不落表——
+      重启重建，这是边界 17「不建汇总表」的轻量版姿态，缓存失效逻辑只有 TTL 一条。
+    - **分段渲染，禁止全页转圈**：三段式页面的每段（Readout 行 / 趋势区 / 归因与
+      榜单区）是独立请求，各自到达各自渲染，页面骨架立即出现。「打开页面一直在转」
+      的根因往往不是单条 SQL 慢，而是前端等齐全部数据才首屏——最慢的段不许阻塞
+      最快的段。
+17. **性能预算分级（2026-09-09 第四轮修订，撤销原「90 天 < 1.5s」单档判据）**：
+    1.5s 是**显式深挖的容忍上限**，不是日常打开的预算。三档：
+    - Readout 行，缓存命中 < 300ms（未命中按下一档计）；
+    - **默认窗口 30d，全部段 < 800ms**——**默认窗口是 30d 不是 90d**：90d/180d 是
+      用户显式切换的深挖场景，不拿最坏情况当默认体验；
+    - 90d/180d 深挖 < 1.5s，**这一档超了才触发汇总表立项**。
+    读时实时 SQL 是既定姿态，`execution_index` 上 `(project_id, created_at DESC)`
+    索引在（迁移 015/030），边界 23 再补 `(created_at)` 单列索引——30d 窗口走索引
+    + 分位数已限 30d（边界 23），800ms 是索引扫描可达的预算不是祈祷。物化视图
+    （何时刷新/刷新失败/口径变更重建三个新问题）与冷数据归档（P10 14.1）的取舍
+    不变，判据写死，不靠感觉。
+ 18. **看板扩展为「当下 + 变化」**：既有四个比率旁加 7 天 delta（**用百分点 pp 而不是
     百分比**——「从 80% 到 82%」是 +2pp 不是 +2.5%）与 30 天 sparkline；**全局层不再
     多开一个统计页**——看板就是全局统计页（加 sparkline 与 delta 后），项目层「趋势
     分析」扩成「数据统计」（三段式，见 12.5）。
+ 19. **看板项目表几百度量级不做长表滚动**（2026-09-09 用户确认）：全局层数百项目时
+    「一表全量平铺」没有读数价值，改**两个形态分层**——
+    - **Top 10 榜**（默认）：按「接口覆盖率 / 文本用例自动化覆盖率 / 通过率 / 失败量」
+      四个**可切换的指标列**取最差的 10 个项目（反向榜——看板是找问题的页，不是发奖状
+      的页），指标列即下钻入口（点覆盖率列 → 进该项目的对应统计段）。
+    - **全量检索**（按需）：关键字搜索沿用既有 `keyword`（`queryProjectMetrics` 已
+      支持，卡片墙同款语义），命中多少展示多少。
+    - 不做服务端分页翻页器——翻页找「哪个项目差」翻不出来；不引入新参数。
+ 20. **看板读数补齐领导视角的资产面**（2026-09-09 用户确认）：`/stats/overview` 的
+    readout 区在既有执行面（执行量/通过率/失败量/归因覆盖率）之外补**资产面四读数**——
+    全局接口总量（加 sparkline）、**全局接口覆盖率**（有用例接口/全部接口）、**全局文本
+    用例自动化覆盖率**（非 endpoint 绑定已评审用例/全部已评审用例，P7 口径的全局聚合
+    ——`queryProjectMetrics` 的 `spec_automated/spec_total` 子查询已有，SUM 后相除）、
+    文本用例总量。**低读数的下钻路径**：点接口覆盖率 → 项目表 Top 10（coverage 列）；
+    点自动化覆盖率 → Top 10（automation 列）——「哪个项目拉低的」由 Top 10 反向榜
+    回答，不需要新页面。
+ 21. **失败 TopN 补「流程 + 仓库用例」两维**（2026-09-09 用户确认）：既有失败分布只有
+    「按接口」一维（`reports.ts` 的 `endpoint_name` 分组，仅叶 executions）。P8 的
+    TopN 四维（接口/用例/CI 任务/套件）**扩成六维**：+ **按流程**（`execution_index`
+    的 `kind='flow'` 行按 `target_name` 分组，失败次数）+ **按仓库用例**
+    （`repo_test_cases.last_result='failed'` 全窗期计数——注意它是**最新一次**状态，
+    窗口内失败次数应取 `pipeline_run_cases` 按 `guessed_case_key` 归并的 failed 行
+    计数，`last_result` 只当最近态参考）。六维统一进 `stats/failures` 的 `topN`
+    参数，默认接口维。
+ 22. **进入项目默认页改「数据统计」**（2026-09-09 用户确认）：`main.tsx:110` 的
+    index `Navigate to="endpoints"` 改指 `trends`，`ProjectShell.tsx:74/77` 的兜底
+    段同步（`segments[2] ?? "trends"`、`SECTION_ALIASES ?? "trends"`）；`overview`
+    的重定向（`main.tsx:111`）维持指 `endpoints` 不动——它是「概览」语义，改指
+    统计会把它变成第二个统计入口。P8-6 与「数据统计」页改造同批落地（页面没改
+    前先改默认页会把用户送进半成品三段式）。
+ 23. **慢 SQL 先行防线（2026-09-09 第三轮增补，P8-4 起生效）**：`/stats/*` 的全局
+     窗口查询天然没有项目前缀，既有索引全是 `(project_id, created_at)` 前缀形态——
+     **没有索引就等于 Seq Scan**。三层防线，成本递增：
+     - **索引先行（P8-2 迁移顺带）**：`execution_index/executions/pipeline_runs`
+       各补一条 `(created_at DESC)` 单列索引（见 12.1）；纯读加速、写放大一行一次
+       B-tree 插入。**P8-4 每条接口上线前必须 EXPLAIN (ANALYZE, BUFFERS) 过一遍**，
+       抓到 Seq Scan / 非预期 Buffer 增长即补索引或改写查询，不带着已知扫表上线。
+     - **查询自身纪律**：窗口上限 180 天写死校验（超了 400，不静默截断）；仓库用例
+       失败维先按 `pipeline_runs.created_at` 收敛 run 集再 join `pipeline_run_cases`
+       （绝不反着来）；`byType` 读时归类（jsonb 逐行展开）**留在项目级页面，不抬到
+       全局**——它是所有统计查询里单行成本最高的一条；分位数 `percentile_cont`
+       只在 ≤30d 窗口提供（90d 档位不返回分位，退化列给 null——数据库侧排序成本
+       随窗口线性涨，砍它是零 UX 损失的省法）。
+     - **超时护栏（服务端）**：`/stats/*` 路由组统一挂 `statement_timeout = 5s`
+       （per-route 级，会话内 SET LOCAL，不污染连接池全局）；超时返回 503 + 明确
+       错误码（「统计窗口过大，请缩小时间范围」），**绝不挂起等数据库慢慢算**。
+       前端对 503 显示空态 + 缩窗建议，不白屏。5s 而不是 1.5s：1.5s 是 P8-1 门槛里
+       90d 出图的**性能验收线**，超它触发边界 17 的汇总表立项判据；5s 是**故障线**——
+       超过它意味着已经有东西在挤占连接池，先失败先止损。
+     - **验收时带 `pg_stat_statements` 复核**：P8-4/P8-8 验收时取 Top 10 语句
+       （mean_exec_time 排序），统计类语句必须全部走 Index Scan；这条同时覆盖
+       12.7 门槛 8 的 1.5s 判据取证。
 
-### 12.1 数据库迁移：053_p8_attribution.sql
+### 12.1 数据库迁移：054_p8_attribution.sql
 
 ```sql
 CREATE TABLE IF NOT EXISTS failure_categories (
@@ -1248,6 +1330,23 @@ CREATE INDEX IF NOT EXISTS failure_attributions_created_idx
 `created_at` 冗余记归因时间（非失败时间）——按时间看「归因行为」用；「按失败发生时间
 的分布」join 目标表的 `created_at`。
 
+**同迁移附带的索引（全局窗口扫表的先行防线，边界 23）**：
+
+```sql
+-- 全局统计窗口的无项目前缀查询：既有 (project_id, created_at) 前缀用不上
+CREATE INDEX IF NOT EXISTS execution_index_created_at_idx ON execution_index (created_at DESC);
+-- 失败 TopN 接口维 / Flaky / MTTR 的全局序列查询（executions 同款理由）
+CREATE INDEX IF NOT EXISTS executions_created_at_idx ON executions (created_at DESC);
+-- 仓库用例失败维：90 天窗口先收敛 run 集，再 join cases
+CREATE INDEX IF NOT EXISTS pipeline_runs_created_at_idx ON pipeline_runs (created_at DESC);
+-- 归因「按失败发生时间」的分布：join 目标 created_at 的索引侧已由上面三条覆盖
+```
+
+> 这四条是**纯读加速索引**，与 P8-8 的「子查询 WHERE 下推」互补：P8-8 治的是
+> `queryProjectMetrics` 的七表全表聚合，这里治的是 `/stats/*` 的时间窗扫描。写放大
+> 代价评估：`executions` 与 `execution_index` 每终态写一行，两条单列索引各多一次
+> B-tree 插入，可接受；`pipeline_runs` 频率低一个量级，无感。
+
 ### 12.2 后端新 API
 
 ```
@@ -1258,12 +1357,12 @@ DELETE /api/v1/projects/:id/failure-attribution?targetType=&targetId=   清除�
 POST   /api/v1/projects/:id/failure-attribution/batch   批量：[{targetType, targetId}] + 同一 category/note
 
 # 全局统计（新路由组，无项目前缀）
-GET    /api/v1/stats/overview?days=30            全局读数（执行量/通过率/失败量/归因覆盖率/各资产总量）+ 7 天 delta
+GET    /api/v1/stats/overview?days=30            全局读数（执行量/通过率/失败量/归因覆盖率/各资产总量 + 资产面四读数：接口总量/接口覆盖率/文本用例自动化覆盖率/文本用例总量，边界 20）+ 7 天 delta
 GET    /api/v1/stats/trend?metric=&days=&projectIds=   execution_trend（量/通过率/分位）| asset_trend（新增）
-GET    /api/v1/stats/failures?days=&projectIds=  失败归因分布（含未归因）+ 失败 TopN（按接口/用例/CI 任务/套件四维）
-GET    /api/v1/stats/flaky?days=&projectIds=     不稳定用例榜（见边界 19 的判定）
+GET    /api/v1/stats/failures?days=&projectIds=&topN=  失败归因分布（含未归因）+ 失败 TopN（六维，边界 21：接口/用例/CI 任务/套件/流程/仓库用例）
+GET    /api/v1/stats/flaky?days=&projectIds=     不稳定用例榜（见 Flaky 判定）
 GET    /api/v1/stats/coverage?days=              三个覆盖率口径的 30 天序列
-GET    /api/v1/stats/projects?days=              项目对比表（执行量/通过率/失败/归因覆盖率/最近执行）
+GET    /api/v1/stats/projects?days=&metric=&order=asc&limit=10   项目对比（Top 10 反向榜或关键字命中全量，边界 19；metric 取 coverage/automation/passRate/failed）
 
 # 既有接口的增量
 GET    /api/v1/projects/:id/executions           补 from/to 时间窗参数（下钻前置）
@@ -1283,13 +1382,15 @@ set_failure_attribution（写，复用上面 REST 的校验）
 | 通过率/失败量趋势（全局 + 可按项目筛） | 整体质量在变好还是变坏 | `execution_index` |
 | 资产新增趋势（接口/接口用例/流程/套件/文本用例/仓库用例） | 平台在长吗 | 各表 `created_at`（`removed` 的仓库用例仍计入——衡量的是「新增行为」不是存量） |
 | Flaky 用例榜 | 哪些用例一会儿绿一会儿红 | `executions` 按 `case_id` 序列翻转计数 + `repo_test_cases` 的 SDK 上报序列 |
-| 失败 TopN（接口/用例/CI 任务/套件四维） | 先修哪个 | 扩展既有 `reports.ts:221`（只有按 endpoint 一维） |
+| 失败 TopN（接口/用例/CI 任务/套件/流程/仓库用例六维，边界 21） | 先修哪个 | 扩展既有 `reports.ts:221`（只有按 endpoint 一维）；流程维走 `execution_index` kind='flow' 的 `target_name`，仓库用例维走 `pipeline_run_cases` 按 `guessed_case_key` 归并 |
 | 排队时长趋势 | 要不要加 worker/Runner | `started_at - created_at`（报告列表已在算 `queue_ms`） |
 | 触发源分布（manual/scheduled/webhook/ci） | 自动化真的在自动跑吗 | `execution_index.trigger_source`（零成本） |
 | 三个覆盖率口径序列 | 测试的底座在变大吗 | 接口覆盖（dashboard 口径）/ 仓库覆盖（形状去重）/ 自动化覆盖（P7 口径） |
 | MTTR（失败→首次转绿） | 失败有人跟吗 | 同 Flaky 的序列查询 |
 | 首次通过率 | 新用例质量 | 同上 |
 | 计划进度 / 通过率 | 这轮回归到哪了 | P7 的 `test_plan_items` |
+| 全局资产面四读数（接口总量/接口覆盖率/文本用例自动化覆盖率/文本用例总量，边界 20） | 家底有多厚、自动化推进到哪了 | `queryProjectMetrics` 子查询 SUM 复用（spec_automated/spec_total 已有） |
+| 项目 Top 10 反向榜（四个指标列可切换，边界 19） | 哪个项目拉低了全局读数 | `/stats/projects?metric=&order=asc&limit=10` |
 | **不做**：人员效能统计 | — | 容易沦为 KPI 工具、扭曲归因行为 |
 
 Flaky 判定（写死在 `lib/metrics.ts`，与通过率同处口径库）：窗口 30 天内同一
@@ -1299,16 +1400,24 @@ Flaky 判定（写死在 `lib/metrics.ts`，与通过率同处口径库）：窗
 
 - **项目层**：「趋势分析」页（`trends`）改名「数据统计」（路由保留 `trends` 不换——
   深链不断，导航文案改）。三段式：`Readout` 行（执行量/通过率/失败量/归因覆盖率
-  + delta）→ 趋势区（折线 + 堆叠柱）→ 归因与榜单区（环形 + TopN 表 + Flaky 榜）。
-  顶部筛选：时间窗 / includeRepo / 触发源。
+  + delta）→ 趋势区（折线 + 堆叠柱）→ 归因与榜单区（环形 + TopN 表 + Flaky 榜，
+  TopN 六维 tab：接口/用例/CI 任务/套件/流程/仓库用例）。顶部筛选：时间窗 /
+  includeRepo / 触发源。**默认窗口 30d（边界 17）**；三段独立请求、各自到达各自
+  渲染，页面骨架立即出现，最慢的段不阻塞最快的段（边界 16）。
 - **全局层**：数据看板（`/dashboard`）按边界 18 扩展——比率卡 + sparkline + delta，
-  项目表加「归因覆盖率」列；不加第二个统计页。
+  **readout 区补资产面四读数**（边界 20：接口总量 + sparkline、全局接口覆盖率、
+  全局文本用例自动化覆盖率、文本用例总量；低读数点击下钻 Top 10 对应列）；
+  **项目表改 Top 10 反向榜 + 关键字检索两形态**（边界 19：指标列可切换
+  coverage/automation/passRate/failed，默认按所选指标升序取最差 10 个；归因覆盖率
+  作为列保留）；不加第二个统计页。
+- **默认落地页**：进入项目从「接口管理」改「数据统计」（边界 22：`main.tsx:110`
+  index 重定向 + `ProjectShell` 兜底段同步；与 P8-6 同批）。
 - **`components/charts/`**：`LineChart`（多 series、null 断线）、`StackedBars`、
   `Donut`、`Sparkline`、共享 `niceStep` 与 hover 层（透明 rect + 常驻读数条 +
   HTML tooltip）。`Trends.tsx` 与 `TimelineGantt` 改为消费这套——三份画图逻辑收敛成
   一份。
 - **下钻**：图表 `onClick` 按 12.2 的 URL 表跳转；时间窗/筛选进 URL（1.2.1 服务端
-  检索铁律）。
+  检索铁律）。Top 10 榜行点击 → 进项目（默认落在统计页，与边界 22 闭环）。
 
 ### 12.5 手写 SVG 的参考项目（用户问的「悬浮折线统计」）
 
@@ -1333,14 +1442,506 @@ Flaky 判定（写死在 `lib/metrics.ts`，与通过率同处口径库）：窗
 
 | 步 | 内容 | 产出 |
 | --- | --- | --- |
-| P8-1 | 口径收口（三处通过率 + 自指排除 + includeRepo 一致性），纯重构 | 既有页面数字一致；缺陷记 issue_fix |
-| P8-2 | 迁移 053 + 分类字典 + 归因 REST（单条/批量/清除） | 归因可打可查 |
-| P8-3 | 归因前端入口（报告页失败行 + 执行记录失败行 + 批量抽屉） | 人工归因闭环 |
-| P8-4 | `/stats/*` 六条接口 + 可见项目集过滤 + 列表接口 from/to | 全局数据可取 |
-| P8-5 | `components/charts/` 抽象 + hover/刻度 + Trends/TimelineGantt 接入 | 一套图表底座 |
-| P8-6 | 项目层「数据统计」三段式 + 看板 sparkline/delta + 下钻接线 | 页面可用 |
-| P8-7 | MCP 两个归因工具 + `source` 筛选 + by-index 统一入口 + i18n | agent 归因闭环 |
-| P8-8 | **读时聚合性能收口**（2026-09-08 用户记录，定级 P8）：`/api/v1/projects` 实测 817ms、`/api/v1/dashboard` 373ms——两接口共用 `queryProjectMetrics`（`routes/dashboard.ts:21`），六张表（endpoints/environments/executions/test_cases/schedules/ci_tasks）的 GROUP BY 子查询**每次调用全表聚合**，项目数与执行量增长会线性放大。方向：可见项目集先收敛（子查询带 WHERE 下推）/ 索引复核 / 仍慢再议预聚合表 | 看板与项目列表 < 200ms |
+| P8-1 | 口径收口（三处通过率 + 自指排除 + includeRepo 一致性），纯重构 — **已实现**（2026-09-09，见下方实现状态） | 既有页面数字一致；缺陷记 issue_fix |
+| P8-2 | 迁移 054 + 分类字典 + 归因 REST（单条/批量/清除）+ **归因类型管理（系统设置 tab，用户增补）** — **已实现**（2026-09-09，见下方实现状态） | 归因可打可查 |
+| P8-3 | 归因前端入口（报告页失败行 + 执行记录失败行 + 批量抽屉）— **已实现（2026-09-09，范围按用户收窄：入口只在报告侧，见下方实现状态）** | 人工归因闭环 |
+| P8-4 | `/stats/*` 六条接口 + 可见项目集过滤 + 列表接口 from/to + **慢 SQL 防线落地（边界 23：索引先行 + EXPLAIN 复核 + statement_timeout 5s + byType 不抬全局/分位限 30d）+ 30s TTL 内存缓存（边界 16）** — **已实现**（2026-09-09，见下方实现状态） | 全局数据可取且不拖垮库 |
+| P8-5 | `components/charts/` 抽象 + hover/刻度 + Trends/TimelineGantt 接入 — **已实现**（2026-09-10，见下方实现状态） | 一套图表底座 |
+| P8-6 | 项目层「数据统计」三段式 + 看板扩展（sparkline/delta + 资产面四读数 + Top 10 反向榜/检索，边界 19/20）+ 下钻接线 + **进入项目默认页改 trends（边界 22，`main.tsx:110` + `ProjectShell` 兜底段）** — **已实现**（2026-09-10，见下方实现状态） | 页面可用 |
+| P8-7 | MCP 两个归因工具 + `source` 筛选 + by-index 统一入口 + **TopN 六维（边界 21：流程/仓库用例两维随 `stats/failures` 扩参）** + i18n — **已实现（2026-09-10，见下方实现状态）** | agent 归因闭环 |
+| P8-8 | **读时聚合性能收口**（2026-09-08 用户记录，定级 P8）：`/api/v1/projects` 实测 817ms、`/api/v1/dashboard` 373ms——两接口共用 `queryProjectMetrics`（`routes/dashboard.ts:21`），聚合子查询**每次调用全表聚合**（P7 后已是**七张表**：endpoints/environments/executions/test_cases/schedules/ci_tasks/**spec_cases**——P7-6 在同一下挂点追加了文本用例/自动化覆盖子查询，慢查询的账按现状记），项目数与执行量增长会线性放大。方向：可见项目集先收敛（子查询带 WHERE 下推）/ 索引复核 / 仍慢再议预聚合表 — **已实现**（2026-09-11，两刀：第一刀 2026-09-10 拆轻 + 第二刀子查询下推，见下方实现状态） | 看板与项目列表 < 200ms |
+
+> **P8 范围增补（2026-09-09 第二轮，用户三条反馈，边界 19–22）**：① 看板项目表在
+> 几百项目量级下改 Top 10 反向榜 + 关键字检索两形态，不做分页长表；② 看板 readout
+> 补资产面四读数（全局接口总量/接口覆盖率/文本用例自动化覆盖率/文本用例总量），
+> 低读数经 Top 10 反向榜下钻到「哪个项目拉低的」；③ 失败 TopN 扩六维（+ 流程 +
+> 仓库用例），进入项目默认页改「数据统计」。均落入 P8-6/P8-7 批次，顺序不变。
+
+> **P8 启动前核对（2026-09-09，P7 验收后）**：实施顺序 P8-1…P8-8 维持不变，依据
+> 现场核对——① 排序理由仍成立（12.3 资产新增趋势含文本用例 `spec_cases`，P7 口径
+> 已定型；排序依据「测试管理在统计之前」原样兑现）；② P8-1 的三处缺陷锚点仍在
+> 现场（`reportPayload.ts` 的 `se.total` 分母 / `alerts.ts:334` 的含 skipped 分母 /
+> `reports.ts` 趋势与汇总均未排 `detail_id <> id`，`executionIndex.ts:23` 列表侧已排除）；
+> ③ 12.2 的 `by-index` 统一入口、列表 from/to 均未实现，前置仍成立；④ 归因三目标
+> 表名核对无误（`executions` / `pipeline_run_cases` / `execution_steps`）。两处变更：
+> 迁移编号顺延（P8 已用到 **056**——054 归因 / 055 P8-2 索引修复 / 056 归因 bug
+> 链接，**P9 057 / P11 058**——053 已被 P7 的 `053_p7_spec_case_status_review.sql`
+> 占用）；P8-8 子查询表数六→七（P7-6 追加了 spec_cases 子查询）。**不新增数据**：归因分类字典 7 类由迁移种子自带
+> （`ON CONFLICT DO NOTHING`），无需预置任何数据；样本数据继续用 dev 库既有执行
+> 历史即可。
+> **2026-09-09 第三轮（性能边界 23）**：`/stats/*` 全局窗口查询踩索引空缺（既有索引
+> 全是 `(project_id, created_at)` 前缀形态，无项目过滤即 Seq Scan）——三层防线
+> 写入边界 23（索引先行 / 查询纪律 + statement_timeout 5s / pg_stat_statements
+> 复核），索引随迁移 054 落地，P8-4 批次起生效。
+> **第四轮（同日，性能预算修订，边界 16/17）**：原「90 天 < 1.5s」单档判据撤销——
+> 1.5s 是显式深挖的容忍上限不是日常预算（「打开页面一直在转」的体感不可接受）。
+> 改三档：Readout 缓存命中 < 300ms / 默认窗口 30d 全段 < 800ms / 90d–180d 深挖
+> < 1.5s（仅此档触发汇总表立项）。配套：`/stats/*` 服务端 30s TTL 内存缓存
+> （边界 16，可见项目集哈希键）；三段式页面分段渲染不互相等待；**趋势页默认窗口
+> 从 24h 改 30d**（原 24h/7d/30d 三档保留为可选项）。
+>
+> **P8-1 实现状态（2026-09-09）**：口径三件事收敛到新 `lib/metrics.ts`（边界 2 的
+> 原定形态——SQL 片段常量 + TS 同款，不是参数化函数）：`PASS_RATE_SQL(prefix)`
+> 嵌 SELECT 列表（表别名调用方传）、`passRateOf(passed, failed)` 供事件计数在手
+> 的 Node 场景、`NOT_SELF_DEBUG`（`detail_id <> id`）、`sampleKinds(includeRepo)`
+> （自 reports.ts 迁入，readIncludeRepo 留在原处——它只服务本文件两条路由）。
+> 五个落点全部收敛：① `reportPayload.ts` 报告详情/分享页从 `success/total` 改
+> `PASS_RATE_SQL`（全 skip 报告从 0% 变 null「没有结论」，与列表一致）；②
+> `alerts.ts` 套件通知分母去掉 skipped 改 `passRateOf`；③ `reports.ts` 报告列表
+> UNION 两侧手写 CASE 收编 `PASS_RATE_SQL`（runner 侧 `passed_count` 列名差异
+> 用 replace 收编）；④ 趋势桶 passRate 换 `passRateOf`（语义本等价——status
+> 过滤已挡非定局行，换同一实现防漂移）；⑤ summary 的 passRate 同款（原本就对）。
+> 自指排除补齐（缺陷②）：trend 的 LEFT JOIN ON 与 summary 的 WHERE 各嵌
+> `NOT_SELF_DEBUG`，单步调试的一次性父索引不再进趋势/汇总样本（列表侧
+> executionIndex.ts 的既有口径）。**includeRepo 一致性（缺陷③）判定为数据源
+> 错位非 SQL 漏改**：byEndpoint/byType 读叶子 executions，ingest/runner 失败不在
+> 那张表里——按边界 1 留给 P8-4 `/stats/*` 直接做对，summary 注释已写明防止
+> 误修。零迁移（纯代码重构）。缺陷明细记
+> `issue_fix/问题记录-P8-1口径收口三缺陷.md`。`pnpm check` 编译通过；服务重启
+> 与页面验收按 AGENTS.md 留给用户。
+
+> **P8-2 实现状态（2026-09-09）**：迁移 `054_p8_attribution.sql` 落地——`failure_categories`
+> 字典（种子七类，`ON CONFLICT DO NOTHING` 幂等）+ `failure_attributions`（UNIQUE
+> (target_type, target_id)、source CHECK('human','mcp')、`ON DELETE CASCADE` 项目）
+> + 边界 23 的四条 `(created_at DESC)` 单列索引（execution_index / executions /
+> pipeline_runs——三条即计划写死的那份；`failure_attributions_created_idx` 计划已有）。
+> 归因 REST 四条（`routes/attributions.ts`）：`GET /projects/:id/failure-categories`
+> （登录即可、只回 active）、`POST /failure-attribution`（INSERT ON CONFLICT DO
+> UPDATE——重打标是覆盖不是先删后插）、`POST /failure-attribution/batch`（上限 100、
+> 逐条校验「本项目且是失败」、同一事务整批 upsert、混入非失败即整批拒）、
+> `DELETE /failure-attribution?targetType=&targetId=`（清归因）。目标校验三张表
+> `executions`（status='failed'）/ `pipeline_run_cases`（经 pipeline_runs 归属 +
+> status IN ('failed','error')）/ `execution_steps`（经 execution_index 归属 +
+> status='failed'）——给成功行打归因被 404 拒绝。**用户增补：归因类型的增删改**
+> （系统设置「归因类型」tab，`routes/failureCategories.ts` + 前端
+> `FailureCategoriesPanel.tsx`，系统管理员）：`GET/POST/PATCH/DELETE
+> /system/failure-categories`——code 建后不可改（统计与 MCP 的稳定标识）、
+> 停用≠删除（打标选项消失、历史照常显示）、删除有引用时 409 + 归因计数、
+> `?force=true` 连带删归因行（回未归因，不偷偷挂去其他分类）。审计动作
+> `failure_attribution.set/clear` 与 `failure_category.create/update/delete` 落
+> `lib/audit.ts`（detail 只带分类码与目标类型，note 自由文本不进）。前端
+> `api.ts` 类型与八条方法 + `FailureCategoriesPanel`（挂 SystemPage 第六个 tab）+
+> i18n 两语言。`pnpm check` 前后端均只剩 P7 遗留的两处既有错误（excel.ts:305 /
+> specImport.ts:182 / SpecImportModal.tsx:174——P7 批次带入，与本批无关）；服务
+> 重启与页面验收按 AGENTS.md 留给用户。P8-3（归因前端入口——报告页失败行 + 执行
+> 记录失败行 + 批量抽屉）是下一个批次，本批不碰报告页。
+
+> **P8-3 实现状态（2026-09-09）**：范围按用户收窄——**入口只做报告侧**（报告列表 +
+> 报告详情），执行记录失败行入口不做（原 12.0 边界 9 的第二处，用户明确排除）；批量
+> 归因保留（边界 4 的一等交互）。目标推导对齐三类叶子目标：套件失败成员有
+> `httpExecutionId` → `execution` 目标（接口用例的 HTTP 失败，执行记录侧将来读同一行），
+> 否则 → `execution_step`（流程成员等非 HTTP 失败）；CI 用例行 → `pipeline_run_case`。
+> 落点：
+> - **报告列表**（`reports.ts`）：每行新增归因聚合 `attribution: {failed, attributed,
+>   categories[]}`（分类名随行带出，读侧不依赖字典请求）——单查询 UNION 两源目标
+>   （套件失败成员 + run 的 failed/error 用例）LEFT JOIN `failure_attributions` 聚合，
+>   只对当前页的行取（O(页) 不是 O(全量)）。
+> - **随行归因**：`loadSuiteReport` 成员查询与 `pipeline-runs/:runId/cases`、
+>   `loadRunnerReport` 的 cases 查询各 LEFT JOIN 归因 + 分类名（`attributionOf` 进
+>   `models/types.ts`，`ExecutionStep`/`PipelineRunCase` 加可选 `attribution`）——
+>   分享页（免登录）与 viewer 同样读得到，只是没有打标入口。
+> - **前端**：新组件 `AttributionDrawer.tsx`（分类单选手写 radio + note + 归因对象
+>   清单 + 证据消息节选 + 单条清除；单条预填、批量不预填；>100 目标客户端分块提交
+>   ——服务端单批上限 100）。入口三处共用它：报告列表行（见下）、套件详情失败成员行、
+>   仓库报告用例行。allure 视图行 ↔ DB 用例行按 `name|start|stop` 复合键匹配（视图
+>   `uid` 读的是 `parsed.uid` 而 allure 结果文件标识字段叫 `uuid`，靠 name 兜底，不能
+>   当 `external_id` 用——匹配键的推导写在 `viewCaseKey` 注释里）；junit 降级列表的行
+>   就是 DB 行。批量：三张表失败行可勾选 + 表头「全选失败」+ 批量按钮。
+> - **验收反馈一轮（2026-09-09，同日三项）**：① **报告列表行直接可归因**——归因格
+>   （a/f + 分类 chip / 未归因 N）整格是按钮，点击按报告类型拉失败目标清单（套件 =
+>   报告详情的失败成员、仓库 = cases 的 failed/error 行）开同一抽屉：单条失败走单条
+>   模式（预填 + 可清除），多条走批量；落库后重拉列表。② 报告列表删 名称/通过/失败
+>   三列，列宽重排（固定列 ~800px：触发 168 / 通过率 78 / 总数 60 / 耗时 78 / 状态
+>   96 / 归因 168 / 时刻 158，报告名吃剩余宽度并兜底读 targetName）。③ **通过的展示
+>   无需归因**——列表无失败行为空单元格；三张表（成员/用例）归因列整列只在有失败时
+>   出现，非失败行空单元格（不再渲染「—」）。
+> i18n 双语（`attribution.*` 29 键）+ CSS（`report-col-attribution`、`chip-action`、
+> 抽屉 radio/清单/证据样式）。`pnpm check`/`pnpm build` 前后端通过；服务重启与页面
+> 验收按 AGENTS.md 留给用户。执行记录失败行入口维持不做（用户收窄），P8-7 的 MCP
+> 工具与统计页（P8-4/6）不受影响。
+> **验收反馈二轮（同日三项）**：① **报告列表加归因类型多选筛选**——`GET /suite-reports`
+> 补 `attribution=code,code`（服务端过滤，COUNT 与分页共用一份 WHERE；相关子查询逐
+> 报告 EXISTS，目标推导与聚合同口径），`__unattributed__` 伪值筛「存在未归因失败的
+> 报告」（分类 code 以小写字母开头，双下划线前缀不撞车）；前端选项 = active 字典 +
+> 「未归因」。② 归因列多分类叠行 → 单行化：`a/f` + 最多一个分类 chip（104px 截断
+> ellipsis）+ `+N` 概括其余，完整分布进 title。③ **仓库执行详情的上级按入口区分**：
+> 报告列表行点击带 `?from=suite-reports` → 面包屑/侧栏归「报告列表」（query 是唯一
+> 事实源，刷新/分享保持归属）；仓库模式内入口（CI 任务/用例树/调度）不带参数、维持
+> 仓库归属——`ProjectShell` 的 `suiteReportOpen` 改按真实路由段判定。
+> **验收反馈三轮（同日两项）**：① 归因格 `+N` 的完整分布改 **hover 面板**（`Tip`
+> 原语 / antd Tooltip 100ms；原生 title 延迟一秒且样式不可控）——覆盖率 + 逐分类
+> 计数 + 打标提示。② **归因绑定 bug 链接**：迁移 `056_p8_attribution_bug_url.sql`
+> （`bug_url TEXT NOT NULL DEFAULT ''`，空串 = 未绑定，与 note 同款空值不建档）；
+> REST 单条/批量收 `bugUrl`（非空必须 http(s)，伪协议入口拒掉），审计 detail 非空
+> 时带上；`FailureAttribution`/`FailureAttributionLite` 与三处随行 JOIN 增列；抽屉
+> 加「Bug 链接」输入（客户端同规则校验，非法禁存），行内 chip 旁出外链小图标
+> （chip 是按钮，链接为兄弟节点，点击不触发打标）。P8-7 的 MCP 归因工具届时同参数
+> 透传。
+> **验收反馈四轮（同日三项，抽屉形态统一）**：① 仓库归因弹窗出现裸键
+> `attribution.batchNoteHint`——该键此前漏定义、上轮已补（用户测试早于修复落地）；
+> 同时它原先在备注与 Bug 链接下各渲染一份，收敛为一处。② 「设置了 bug 绑定在哪条
+> 用例」不透明——批量目标清单改为**逐行带当前归因**（分类 chip + bug 外链图标，
+> 全量展示不截断、自滚动），bug 会落到哪几条提交前可见；提示文案改为「应用到清单
+> 里的每一条失败；不同 bug 请进报告逐条归因」。③ 单条与多条弹窗形态割裂（单条
+> 预填+证据，多条空表单+截断清单）——**统一**：`AttributionTarget` 携带当前归因，
+> 预填规则改为「全批同一分类才预选（单条恒成立、清一色批量也成立；note/bugUrl
+> 进一步要求逐字一致）」，`existing` prop 撤销、预填从目标清单推导；清除按钮与
+> 停用分类的禁用项随之改读清单。
+> **验收反馈五轮**：用户确认「跳转回报告列表」是自己批量把 bug 链接设成了平台地址，
+> 功能保留；套件侧无需新增实现——bug 图标与绑定为套件/仓库共用（图标只取决于该条
+> 归因绑没绑链接，套件归因绑上即出现）。可用性改进：图标从通用外链换成 bug 形态
+> （lucide `Bug`），hover 由 `Tip` 提示「跳转 Bug：地址」（原先只有原生 title 裸
+> URL，看不出它是什么）。
+
+> **P8-4 实现状态（2026-09-09）**：新路由组 `routes/stats.ts`（`index.ts` 注册），
+> 六条接口全量落地——`overview`（执行面四读数 + 触发源分布 + 资产面四读数 + 各资产
+> 总量 + 7 天 delta，delta 比率用 pp）、`trend`（execution_trend 量/通过率/耗时与
+> 排队分位；asset_trend 六类资产日增序列，repo_test_cases 含 removed——「新增行为」
+> 口径；days ≤ 2 小时桶、否则天桶）、`failures`（归因分布含未归因 + TopN **四维**
+> endpoint/case/ci_task/suite——边界 21 的流程/仓库用例两维按计划留给 P8-7 扩参）、
+> `flaky`（两腿：executions 按 case_id 序列 + ingest_records 按 run 归并的 SDK 序列，
+> 推断规则与 ingest.ts 的 deriveResult 同一条；同一批查询顺带 MTTR「失败→首次转绿」
+> 与窗口内首跑通过率）、`coverage`（三口径日序列——接口覆盖/仓库覆盖（形状去重，
+> `coverageShapeKey` 在 TS 侧算，等价关系不复制进 SQL）/自动化覆盖；每点是截至当天
+> 的存量快照）、`projects`（Top 10 反向榜：coverage/automation/passRate/failed 四指标
+> 列可切换、order 默认 asc、归因覆盖率作为列保留；keyword 传了返回命中全量）。
+> **可见项目集过滤**：`resolveScope`——系统管理员不传 projectIds 即全量；非管理员
+> 永远被 `user_project_roles` 兜底；显式请求不可见项目（含不存在 id）403 不静默剔除
+> （门槛 6）。**30s TTL 缓存（边界 16）**：进程内 Map，键 = 路由 + 可见集哈希
+> （排序后 sha1）+ 窗口参数，可见集相同的用户共享；失效只有 TTL 一条。**statement_timeout
+> 5s（边界 23）**：每请求 `BEGIN + SET LOCAL`，超时（57014）→ 503 + **新错误码 2005**
+> （前端 P8-6 按码渲染「统计窗口过大，请缩小时间范围」空态）；SET LOCAL 随事务还原
+> 不污染连接池。**查询纪律**：days 整数 1..180（超了 400 不静默截断）；分位数只在
+> ≤30d 窗口返回（90d/180d 退化列给 null）；byType 不抬全局（留在项目级 summary）；
+> 仓库序列先按 run 集收敛再取 records；窗口起点/天数/LIMIT 全走 `$n` 占位符，请求值
+> 不进 SQL 文本。**失败目标母查询** `failureTargetsSql` 三处共用（overview 覆盖率 /
+> failures 分布 / projects 归因列），目标推导与 P8-3 报告列表同一口径——P8-1 遗留的
+> includeRepo 数据源错位按边界 1 由本批做对：stats 的失败读数走 execution_index /
+> pipeline_runs / execution_steps 的正确来源，不再挂在叶子 executions 一棵树上。
+> Flaky 阈值写死 `lib/metrics.ts` 的 `FLAKY` 常量（与通过率同处口径库，响应里随行
+> 带出 `thresholds`）。**列表接口 from/to**（下钻前置）：`GET …/executions`
+> （endpoints.ts，子句复用既有 `executions.` 前缀限定）与 `GET …/suite-reports`
+> （reports.ts，UNION 视图外层一份过滤盖两源）各补 `from`/`to`，ISO 解析失败 400。
+> **EXPLAIN (ANALYZE, BUFFERS) 逐条复核过**（dev 库：executions 15.4 万行）：窗口
+> 扫描走 054 的 `execution_index_created_at_idx`，TopN 接口维走 055 的 partial
+> `executions_failed_created_at_idx`，Flaky 序列走 `executions_case_created_at_idx`，
+> 套件失败成员链全 Nested Loop + 索引；小表（execution_index 304 / suite_executions
+> 45 / failure_attributions 53 / ingest_runs 6 行）上的 Seq Scan 是正确计划不补索引，
+> `ingest_runs` 无 (created_at) 单列索引是 12.1 清单的既定取舍（量级天然低、按 run
+> 收敛后走 (ingest_run_id, seq)）；最重的 projects 聚合 26.7ms，全部远低于三档预算。
+> **零迁移**：054/055 的索引已够用，P9 057 / P11 058 编号不变。开发期发现并修掉
+> 三处自查缺陷：`suites` 表名实为 `test_suites`；窗口聚合 `ARRAY_AGG(expr) FILTER …`
+> 的 FILTER 必须在聚合闭括号外（先在 psql 里抓到 syntax error 才落码）；node-pg 对
+> 参数个数严格（多余报「bind message supplies N…」、跳位引用报「could not determine
+> data type」）——每条查询各建各的 params 数组，共享只在同一条查询内多次引用同一
+> 序号。`pnpm check` 通过；服务重启、缓存/超时/门槛 6–9 的行为验收与页面接线
+> （P8-6）留给用户。
+> **验收反馈六轮**：用户先误判「套件批量弹窗没实现 bug 功能」，随后自行定位到真因
+> ——**单目标形态**缺行：抽屉的单条分支只显示裸名字，「当前归因 chip + bug 图标」
+> 只在多目标清单里有，单条报告（恰好是测的那份套件）看起来像功能没做。修复：归因
+> 对象区块单条/多条统一为同一行渲染（名称 + 当前归因 chip[title 带备注/来源/时间]
+> + bug 图标），多目标额外给条数与滚动，单条在其下保留证据摘要。
+
+> **P8-5 实现状态（2026-09-10）**：`components/charts/` 落地——`core.ts`
+> （`niceMsStep`（从 TimelineGantt 收编，语义不变）/ `niceValueTicks`（数值轴
+> 1-2-2.5-5×10^k）/ `pathSegments`（null 断线）/ `bucketTimeLabel` /
+> `edgeIndices` / `nearestBucket`（hover 反查）/ `formatMsTick`）+
+> `LineChart`（多 series、null 断线、透明 rect 捕指针按 `offsetX/plotWidth`
+> 吸附最近桶、十字线竖腿 + active 点放大、常驻读数条兜底显示末桶值）、
+> `StackedBars`（逐层堆叠——null 层真不占高；total=0 桶画 1px 灰线；hover 桶
+> 高亮 + 常驻读数）、`Donut`（hover 高亮改描边加粗 + 其余片降透明度，中心
+> 数字 hover 时切该片计数与占比）、`Sparkline`（看板 30 天形态用，末点小圆点，
+> 空数据画贴底平线防读成加载失败）、`index.ts` 统一出面。**Trends.tsx 三张图
+> 全部改为消费底座**（私有 LineChart/VolumeBars/FailureDonut 删除；y 轴刻度
+> 与空态判定沿用原值，不趁机改口径）；**TimelineGantt 接入共享 `niceMsStep`
+> 与 `formatMsTick`**（本地 NICE_STEPS_MS/niceStep/formatTick 删除，刻度
+> 行为逐字不变），hover 读数行并类 `.chart-readout`（原 `.timeline-hover`
+> 版式收编成一份，CSS 只留 timeline 特有约束）。`onBucketClick` 的接线点已
+> 在底座 API 里预留（12.4 的下钻归 P8-6 接线）。CSS：`.chart-readout` 新增
+> （常驻高度——条件渲染会把下面的内容顶一次），`.timeline-hover` 改为薄别名；
+> i18n 补 `charts.*` 三键（两语言）；theme-preview 补图表底座参考节（含
+> null 断线与空桶示例——living reference 从此覆盖图表）。零迁移、零新依赖
+> （门槛 11：package.json 无 echarts/recharts/antv）。`pnpm check` /
+> `pnpm build` 通过；hover 手感与两模式对照验收留给用户（AGENTS.md：重启与
+> 页面验收不由 agent 代做）。P8-6 的统计页与看板 sparkline 从这套底座长。
+>
+> **验收追记（2026-09-10 第二轮）**：① hover 错位 / 断线不可读 / 孤立单点不可见
+> 三缺陷修复（详见 `issue_fix/问题记录-P8-5图表底座三缺陷.md`，含 `preserveAspectRatio`
+> 错位根因、`bridgeGaps` 语义分叉、ingest 耗时样本污染的代码 + 数据双修）；
+> ② **趋势页口径三态化（用户验收反馈，改 P4.5 边界 2 的单开关）**：「含仓库执行」
+> 复选框扩成「仅平台执行 / 仅仓库执行 / 全部」三态 segmented——`sampleKinds` 收敛为
+> `SampleScope`（platform = flow/suite；repo = ingest+runner **仍一体不拆**，边界 2
+> 的理由继续成立；all = 四类），趋势/汇总接口参数 `includeRepo` 换 `?scope=`（三态
+> 白名单，缺省 platform），前端按口径切换提示文案；**仅仓库口径下失败分布两段
+> （byEndpoint/byType）服务端跳过查询、前端不渲染**——它们读平台叶子表
+> （P8-1 ③ 的数据源错位，挂在「仅仓库」标题下是错的），`all` 口径照旧展示并在
+> 提示里写明「仅平台叶子」。`/stats/*` 的 `includeRepo` 暂保持二态（P8-6 接线时
+> 直接采用 `SampleScope`）。
+
+> **P8-6 实现状态（2026-09-10）**：四件事全部落地——
+> - **项目层「数据统计」三段式**（`Trends.tsx` 重写，路由沿用 `trends` 深链不断、
+>   导航文案改「数据统计」）：数据源整体切到 `/stats/*`（`projectIds` 钉在本项目
+>   复用全局六条——项目层与看板从此一套口径；旧 `/reports/trend|summary` 前端
+>   不再调用，接口按边界 10 保留、退役列收尾批次）。三段**四条独立请求**
+>   （overview / trend / failures / flaky）各自到达各自渲染（边界 16），进入拉一次
+>   + 手动刷新按钮；顶部筛选 = 时间窗（`days` 进 URL：24h/7d/**30d 默认**/90d/180d，
+>   边界 17）+ 口径三态（不进地址栏，沿旧决策）+ 触发源（服务端 trend 扩参
+>   `triggerSource` 白名单，**只过滤趋势段**——Readout 与归因读整窗事实，提示文案
+>   写明）。503+2005 每段渲染「统计窗口过大」空态 + 缩窗建议 + 就地重试（边界 23
+>   的前端半边，不白屏）；分位数 >30d 窗口面板内显式提示而非静默消失。
+> - **下钻接线**（12.2 URL 表全量）：趋势桶（三张图都接 `onBucketClick`）→
+>   `reports?status=failed&from=<bucket>&to=<bucket+1>`；归因环形片 →
+>   `suite-reports?attribution=<code>`（未归因片用 `__unattributed__` 伪值，
+>   SuiteReports 认 URL 初值）；TopN 行 → `stats.ts` 的 top SQL 补 refId
+>   （endpoint 维 `MAX(endpoint_id)` / ci_task 维 `t.id` / suite 维
+>   `MIN(ei.target_id)`）。下钻落点 `ExecutionRecords` 补 `from`/`to`/`caseId`
+>   三个 URL 参数（可清除 chip 呈现，清掉回全量，不静默缩窄）。
+> - **验收反馈一轮（2026-09-10 同日三项）**：① **TopN 下钻统一改判**——用户反馈
+>   「套件/流程/仓库的下钻应进执行记录并自动填充筛选项」：四维全部落执行记录
+>   （套件/CI 任务 → 父执行记录大类 `type=parent` + `kind=suite|runner` +
+>   `keyword=名称`——runner 行的 target_name 是「任务名 #序号」，ILIKE 子串命中
+>   该任务全部 run；接口/用例 → 单接口大类 `endpointId`/`caseId`），一律带
+>   `status=failed` + 当前统计窗 from/to；Flaky 榜 api 腿同款带窗。② **父执行记录
+>   列表补 from/to**（`executionIndex.ts`，endpoints.ts 同款 ISO 解析 + 400；
+>   COUNT 与分页共用 WHERE）——下钻时间窗此前只有单接口记录支持。③ **时间窗 chip
+>   提为两个大类共用**的筛选项标签（批量调试不参与），下钻上下文可见可清。配套
+>   消歧：TopN tab 文案改「按接口/按用例/…」（裸维度名被误读成页面级筛选，以为
+>   上面的图跟着切），榜上方加 form-note 写明「tab 只切这张榜、叶子计数不受口径
+>   影响、点行进执行记录自动填筛选项」。
+> - **验收反馈一轮缺陷（同日两条，用户报「按用例、按接口统计数据失败」）**：
+>   ① TopN 按接口/按套件维 500——P8-6 补的 refId 聚合用了 `MAX/MIN(uuid)`，Postgres
+>   无此聚合（42883；按用例维实际 200，失败文案来自另外两条 500），改
+>   `ARRAY_AGG…[1]`（取组内最近一次失败的引用）；② `stats/overview` 带 projectIds
+>   必炸（双 WHERE）——P8-4 潜伏缺陷：assets/coverage 六个子查询 `scopeWhere` 后又
+>   跟 `WHERE status…`，scope 全量时片段为空才合法（P8-4 验收用管理员没踩到），
+>   P8-6 前端永远带 projectIds 后全部触发，统一改 `scopeAnd` 并入既有 WHERE。两处
+>   修后 SQL 均在 dev 库 psql 实跑验证；明细记
+>   `issue_fix/问题记录-P8-6统计页接线两缺陷.md`。
+> - **验收反馈二轮（同日两项）**：① **趋势图下钻改落父执行记录**——通过率/执行量/
+>   耗时三张图的样本是执行级（一次流程/套件/仓库 run 一个样本），原下钻落单接口
+>   叶子记录与图的样本不是一个层（用户反馈「跳进单接口记录没看懂」），改
+>   `?type=parent&status=failed&from&to`；kind 不预设（platform/repo 口径在 kind
+>   筛选里是 flow+suite / ingest+runner 的多选组合，单个值表达不了，窗口 + failed
+>   是共享事实）。② **执行记录三个大类都加常驻时间范围筛选**——原生
+>   datetime-local + `.input` 皮肤（TestPlans 既定纪律，不引 antd DatePicker），
+>   起止两个输入框替换此前下钻才出现的时间窗 chip；输入框另持原始文本、只在值
+>   完整可解析时提交（受控值直接绑 ISO 会在打字途中重置输入框）；批量调试列表
+>   后端补 from/to（`batch-executions`，COUNT 与分页共用 WHERE，psql 验证过形状）。
+> - **验收反馈三轮（同日两项）**：① **下钻不预置结论**——趋势桶与 TopN 四维的
+>   下钻 URL 全部去掉 `status=failed`：下钻带的是上下文（时间窗 / 对象筛选 /
+>   kind），「只看失败」留给列表里的人自己点（用户原话「还是要展示全部的记录」）；
+>   归因片 → `attribution=` 筛选维持不变（点哪个分类片就是它的语义，不是预置结论）。
+>   ② **仓库执行详情的入口归属扩到执行记录**——`?from=` 机制从只认
+>   `suite-reports` 泛化为认任意合法 section（PAGES 白名单校验），执行记录两处
+>   runner 行跳转补 `?from=reports`：从执行记录进、面包屑/侧栏归「执行记录」，
+>   从仓库内（CI 任务/用例树/调度）进、不带参数归「仓库」——与 P8-3 反馈③
+>   同一条「从哪进就归哪」的规则。
+> - **验收反馈四轮（同日两项）**：① 时间范围筛选补**一键清除** chip（同时复位提交值
+>   与输入框原文——只清 state 不清框会读成「清了没生效」）。② 仓库执行详情面包屑
+>   从「#序号」改成「**任务名 #序号**」——执行记录 runner 行的身份就是
+>   `execution_index.target_name`（任务名 #序号），点进去面包屑只剩「#12」对不上；
+>   详情路由 JOIN `ci_tasks` 带出 `taskName`（列表路由不带，行身份已在 target_name），
+>   psql 验证过 JOIN 形状。页内标题（RepoPageHead）同款：首版只改了面包屑、页头
+>   仍是「仓库执行 #31」，用户复验指出后补齐——任务名缺失（任务已删）时退回
+>   「仓库执行 #序号」兜底。
+> - **验收反馈五轮（2026-09-10 同日六项，②③①⑥ 是看板改版、④⑤ 是统计口径与
+>   下钻）**：
+>   - ② **看板加项目筛选**：`?project=` 进地址栏，antd Select（全部项目/单项目，
+>     选项 = 可见项目集）；选定后读数与三张趋势图全部带 `projectIds` 钉在该项目，
+>     跨项目 Top 10 榜整段收起（筛了项目还看跨项目榜自相矛盾），page-head 换
+>     「进入项目数据统计」按钮 + filteredHint；选了项目但选项清单未到时不发统计
+>     请求（不可见 id 会 403，等一拍好过闪错误态）。
+>   - ⑥ **看板补趋势三张图**（「项目质量概览没办法整体看出具体情况」）：通过率
+>     折线 + 执行量堆叠柱 + 耗时分位（p50/p90/p99，bridgeGaps），与项目层数据统计
+>     同一套 `components/charts/` 底座、同一份 execution_trend 桶、同一空态语义；
+>     30d 固定窗口、`all` 口径，trendNote 写明混合耗时口径；**选定项目时**点桶下钻
+>     （父执行记录 + 桶时间窗，不预置 status/kind——与三轮「展示全部」同判），
+>     全部项目时图不可点（没有单项目列表可落）。
+>   - ① **资产面 census 升卡片**：原「平台用例 N · 流程 N · 套件 N · 仓库用例 N」
+>     一行事实格升为 readout 卡，资产面合为六卡（接口总量+sparkline / 平台用例 /
+>     流程 / 套件 / 仓库用例 / 文本用例总量）。
+>   - ⑥' **两个覆盖率读数与榜的指标切换 tab 撤掉**（「接口覆盖率、自动化覆盖率、
+>     通过率、失败量看不出来有什么作用」——四者唯一的动作是切榜的排序列，读者
+>     读不出）：接口覆盖率/自动化覆盖率 readout 撤（数字留在 Top 10 榜的列里比较
+>     才有意义，**边界 20 的资产面四读数就此改六卡**）；Top 10 榜的
+>     coverage/automation/passRate/failed segmented 撤（四列本来就全在表里，切 tab
+>     只是换排序），**固定 failed 降序「最差在前」**（边界 19 的「指标列可切换 +
+>     检索两形态」就此收窄为固定列单形态——复验追问「搜索框是不是没用了」后，
+>     榜的关键字检索与页头搜索框一并撤除：找项目归项目管理页，榜的职责是「最差
+>     在前」不是「找得到」，一个只服务于榜的搜索框读不出作用；`statsProjects`
+>     的 keyword 参数后端保留）；通过率读数留在执行面（图出现后它是窗口
+>     读数 + delta，作用自明）。`?metric=` URL 参数不再消费，通过率 sparkline 撤
+>     （真图取代）。
+>   - **验收六轮（同日一项①）：覆盖率读数补回并带「总量」**（「数据概览增加接口
+>     覆盖率/自动化覆盖率/归因覆盖率的总量」）：执行面 readout 行补接口覆盖率、
+>     自动化覆盖率两卡——**百分比 + 分子/分母并排**（68.1% 与 146/214 是两个互补
+>     事实，五轮撤掉的两个读数以「带总量」的形态补回；悬停说明写全口径），归因
+>     覆盖率卡补 delta 之外加一格「已归因失败 N / 未归因 M」（分母是 30d 窗口内
+>     失败目标数，分母 0 时该格不渲染——「没有失败」时归因数字是噪音）。数据
+>     全部来自 overview 既有字段（coveredEndpointTotal/endpointTotal、
+>     specAutomatedTotal/specReviewedTotal、attribution.*），零后端改动。
+>   - ④ **失败 TopN 仓库用例维两处修正**：下钻从「组内最近一次失败 run 详情」
+>     （refId → `pipeline-runs/:id`，替用户挑了一次执行，用户反馈「很奇怪」）改
+>     **用例树 keyword 检索**（`/repo/tree?keyword=<规范 case_key>`——树是这条
+>     用例的资产页，最近任务列 + 抽屉历史都在）；配套把维度的分组身份从裸
+>     `guessed_case_key` 改**规范身份**（LEFT JOIN `repo_test_cases`，ingest.ts 同
+>     一把匹配尺：去参数化后缀直等 + `#` 形态折算）——同一条用例的两种 key 形态
+>     此前会拆成两行，现合一（dev 库实测 40+30 → 40），榜行 name = 规范 case_key，
+>     refId 不再返回。Flaky 榜两条仓库腿同款下钻。
+>   - ⑤ **Flaky 榜增仓库任务腿**（「不稳定用例是不是可以增加仓库任务的 case」）：
+>     `/stats/flaky` 从两腿（api=executions case_id 序列 / repo=ingest SDK 上报
+>     序列）扩三腿，新增 **runner = pipeline_run_cases 序列**：按 (run, key) 折结论
+>     （同 run 同 key 多行任一 failed/error 即 failed、否则任一 passed 即 success、
+>     全 skipped 不入序列——与通过率分母同判），身份用 ④ 同一把规范尺（两种 key
+>     形态折成一条用例，序列才不会断成两截）；MTTR/首跑通过率同款第三条查询并入
+>     聚合。来源列三值：平台用例 / 仓库上报 / 仓库任务。`metrics.ts` FLAKY 注释
+>     同步两条腿 → 三条腿。三条新 SQL（TopN repo_case / flaky runner 腿 / runner
+>     MTTR）均已在 dev 库 psql 实跑验证（flaky 腿实测 10 行出榜、MTTR 124 恢复 /
+>     35 用例；EXPLAIN 0.97ms 小表 Seq Scan 正确计划）。
+>   - ③ **项目内统计「口径=全部时下钻应展示全部」核对为已成立**（二/三轮已改判
+>     的行为，本轮复核）：口径=全部时趋势桶样本 = flow/suite/ingest/runner 父执行，
+>     下钻 URL `?type=parent&from&to` 不预置 status/kind；dev 库实测 9/9 桶 total=3
+>     与 execution-index 同窗 total=3 完全一致（含 canceled 时列表只多不少）。本轮
+>     新增的看板趋势图下钻沿用同一语义。未改代码。
+> - **看板扩展**（`GlobalApp` DashboardPage 重写，边界 18/19/20）：执行面四读数
+>   （执行量/通过率/失败量/归因覆盖率）+ 7 天 delta（比率 pp / 计数绝对差；
+>   `Delta` 原语进 `ui.tsx`，「升=好」按指标声明——失败量升是 fail 色）+ 通过率与
+>   接口总量 30 天 sparkline（`statsTrend` execution_trend / asset_trend 两腿）；
+>   资产面四读数（接口总量+sparkline / 接口覆盖率 / 自动化覆盖率 / 文本用例总量）
+>   + 其余资产总量一行事实格；两个覆盖率读数可点 → 切 Top 10 榜同名列
+>   （`Readout` 扩 `onClick`）；项目表改 **Top 10 反向榜**（四指标列 segmented
+>   可切换、`metric` 进 URL、failed 传 desc、归因覆盖率列保留）+ 关键字检索两形态
+>   （命中全量展示）；榜行点击 → `/projects/:id/trends`（与边界 22 闭环）。看板
+>   执行面取 **`all` 口径**（全局盘点不含仓库 CI 会与「全局」自相矛盾，tip 用
+>   passRateTip.all 承担混合口径说明）、固定 30d 窗口。旧 `api.dashboard` 前端
+>   不再调用（接口保留；P8-8 的性能收口照记）。
+> - **`/stats/*` scope 三态**（P8-5 追记兑现）：`includeRepo` 二态退役，
+>   `?scope=platform|repo|all`（白名单外回 platform，reports.ts readSampleScope
+>   同款）；overview / trend / projects 三处 + 缓存键同步；failures 的 TopN 刻意
+>   不受 scope 影响（维度是显式选择，注释原话保留）。
+> - **默认页改 trends（边界 22）**：`main.tsx` 的 index `Navigate`、`ProjectShell`
+>   两处兜底段（`segments[2] ?? "trends"` / `SECTION_ALIASES ?? "trends"`）与
+>   面包屑项目名链接四处同步（验收门槛 14 的「含面包屑返回项目」）；`overview`
+>   重定向维持指 `endpoints`（「概览」语义不改）。
+> 配套：归因环形分类色走强调色明度阶梯（color-mix 兑 surface）、未归因 = line 灰
+> （分类不是语义，不占语义色）；Flaky 榜带阈值/MTTR/首跑通过率行（阈值从响应
+> `thresholds` 插值，不写死）；charts 底座 `Donut` 补 `onSliceClick`、`Sparkline`
+> 补 `maxWidth: 100%`；i18n 双语（`trends.*` 重写 + `dashboard.*` 增量 +
+> `reports.*` 下钻 chip，插值统一 `{{}}` 双花括号）；CSS 新增 `.delta` 与
+> `button.readout-click`（可点击读数，悬浮只抬边框）。**零迁移**（P9 057 编号
+> 不变）。`pnpm check` 前后端通过；服务重启、三档性能预算（门槛 8）与 hover/
+> 下钻手感验收按 AGENTS.md 留给用户。
+>
+> **读数下钻（2026-09-10 功能增补，「看板选项目后点数据进项目内」）**：看板与
+> 项目层统计页的读数在读数区即可下钻，**选定项目时**接线（全部项目时无单项目落点，
+> 与趋势图同判不给点）：
+> - **分边面板**（`Readout` 扩 `drill` 槽，antd Popover 悬浮弹出）：接口覆盖率
+>   「已覆盖 x / 未覆盖 x」→ 接口列表 + 新增 `?coverage=covered|uncovered` 服务端
+>   筛选（`endpoints.ts` EXISTS test_cases，与 coverageRate 同口径）；自动化覆盖率
+>   「已自动化 x / 未自动化 x」→ 文本用例库 `status=reviewed` + `automation=yes|no`
+>   （既有筛选）；通过率「通过 x / 失败 x」与归因覆盖率「已归因 x / 未归因 x」→
+>   父执行记录（status + 30d 窗）与报告列表（`attribution` 筛选，**新增
+>   `__attributed__` 伪值**与既有 `__unattributed__` 对称）。
+> - **整卡直点**（`onClick`，同 readout-click 语言）：失败量（`status=failed`——数字
+>   语义即失败，归因片判例）、已归因失败、资产面六卡（接口总量/流程/套件/仓库用例/
+>   文本用例总量 → 各自列表；平台用例 → 接口列表 `coverage=covered`）。
+> - **Trends 同步**（执行量/通过率/失败量/归因覆盖率四读数，同款面板与判例；时间窗
+>   用页面当前 days）。
+> - 纪律沿 P8-6 三轮「下钻不预置结论」：执行量面板两侧是「全部 / 有结论」，不带
+>   status；kind 一律不预设。`SuiteReports` 归因筛选下拉补「已归因」选项（伪值进
+>   多选，与具体分类可共存）。i18n 双语 15 键；CSS `.readout-drillable` /
+>   `.readout-drill`（`.drill-side` / `.drill-note`）。**零迁移**；服务重启与验收
+>   按 AGENTS.md 留给用户。
+
+> **P8-7 实现状态（2026-09-10）**：四件事全部落地——
+> - **MCP 两个归因工具**（`lib/mcpToolsAttribution.ts`，注册进 `MCP_TOOLS`，上限
+>   55 → **57**）：`list_unattributed_failures`（read，分页 + `since` 可选窗口；目标
+>   母查询与 `stats.ts` 的 `failureTargetsSql` 同一口径但**方向反过来**——`fa.id IS
+>   NULL` 反连接只取没归因的失败；每行带 label/failedAt/evidence 摘录，摘录按
+>   「项目全部环境当前 secret 并集 + pipeline_run_case 再叠一层所在 CI 任务 env 值
+>   （≥8 字符才遮）」读时脱敏、2KB 截断——与 `redactExecutionForMcp` 同一条纪律：
+>   写入时的遮蔽用的是当时的 secret，读时重跑才可靠）；
+>   `set_failure_attribution`（write，单条；批量刻意不做工具——描述里写明「循环本
+>   工具，按目标幂等」，REST 的批量抽屉才是人用的入口）。`source` 写 `'mcp'`、
+>   `created_by` 落 Token 签发人（`/mcp` 第 4 道闸门已保证签发人此刻有写权限）；
+>   审计走 `mcp_tool.write`（detail 带分类与目标类型，note 不进）。
+> - **校验收敛到 `lib/attribution.ts`（新文件）**：`validateAttributionTarget` /
+>   `normalizeAttributionBugUrl` / `attributionTargetIsFailed` /
+>   `attributionCategoryExists` 从 `routes/attributions.ts` 原样提取，REST 与
+>   MCP 两侧同引一份——边界 8「复用 REST 同一套校验」的字面落法（与 validate.ts
+>   之于写工具的关系同构）。REST 路由行为零变化（信封与审计形状留在路由侧）。
+> - **TopN 六维**（`stats.ts`，边界 21 兑现）：`TOPN_DIMS` 扩 `flow` /
+>   `repo_case`。流程维 = `execution_index` kind='flow' 失败行按 `target_name` 分组
+>   （`NOT_SELF_DEBUG` 排自指行，suite 维同构）；仓库用例维 = 窗口内
+>   `pipeline_run_cases` failed/error 行按 `guessed_case_key` 归并（计划原话：
+>   `last_result` 只是最新态不拿来数窗口失败；NULL key 成不了组天然排除）。两维
+>   refId 都取 `ARRAY_AGG…[1]`（组内最近一次失败）——流程维指向 flow 资产、仓库
+>   用例维指向最近失败 run（下钻落 run 详情页，失败用例行就在里面）。两条 SQL 在
+>   dev 库 EXPLAIN (ANALYZE) 复核过（0.93ms / 0.34ms，小表 Seq Scan 是正确计划）。
+> - **`source` 筛选**（`stats/failures` 扩参 `?attributionSource=human|mcp`，白名单
+>   外不过滤）：分布段只数该来源的归因行（joined 顺带带出 `fa.source`、TS 侧挑行
+>   + 分类按 code 归并——未筛时同一分类的人打/agent 打两行合成一片，来源是打标
+>   行为的属性不是分类）；**覆盖率读数（failedTargets/attributed/unattributed）
+>   不随来源筛变化**——筛哪个来源「还有多少没归因」都是同一个整窗事实，一份扫描
+>   顺带出 source 列，不为读数再扫一遍。缓存键扩 `attributionSource`。前端归因
+>   面板头加来源 Select（全部/人工/Agent），筛来源时环形不加未归因片、覆盖行追加
+>   来源说明（`attributionSourceNote`）。
+> - **by-index 统一入口**（12.2 / 交互 6.2d 的预留路由，前后端各一条同语义）：
+>   后端 `GET …/executions/by-index/:indexId` 302 按 kind 分派（runner →
+>   `pipeline-runs/:runId`（`?from=` 只认 PAGES 白名单，防开放重定向）/ ingest →
+>   `repo/runs` / flow 与 suite（含自指单步调试行）→ 执行记录页 `?parent=` 深链）；
+>   前端 `ExecutionResolver`（`main.tsx` 挂 `executions/by-index/:indexId`，注册在
+>   `reports` 之前）客户端同款分派——站内跳转走 React Router 不发整页请求，深链是
+>   它的主场景；行不存在给空态（与分享页同条纪律，不跳登录）。
+> - **前端配套**：Trends 的 TopN tab 扩到六维（`trends.topN.flow` / `repo_case`
+>   双语）；drillTopRow 补两维（flow → 父记录 `kind=flow` + keyword + 时间窗；
+>   repo_case → `pipeline-runs/:refId?from=reports`）；drillable 判据同步。
+>   **零迁移**（P9 057 编号不变）。`pnpm check` / `pnpm build` 前后端通过；MCP
+>   工具的实跑验收（门槛 10：写回 `source='mcp'`、人工覆盖变 human）、六维真实
+>   失败数据出榜（门槛 13）与服务重启按 AGENTS.md 留给用户。
+
+> **P8-8 实现状态（2026-09-11，两刀）**：
+> - **第一刀（2026-09-10，用户确认范围）**：`/projects` 换用新 `queryProjectList`
+>   （`dashboard.ts`）——只聚合资产计数小表（endpoints/environments/test_cases/
+>   flows/test_suites/repo_test_cases/spec_cases，GROUP BY project_id 全有索引），
+>   executions（P8-8 实测 817ms 的大头）一次都不碰；`queryProjectMetrics`（七表
+>   全量）留给 `/dashboard` 聚合路由自持。前端 `ProjectMetric` 类型随行收缩，项目卡
+>   统计块改七格资产计数（详见主计划 3.1 ②）。**第一刀前 `/dashboard` 373ms 的账
+>   落在第二刀。**
+> - **第二刀（2026-09-11，子查询 WHERE 下推——P8-8 计划原方向「可见项目集先收敛」）**：
+>   `queryProjectMetrics` 先把「这份 WHERE 会放行的项目」收敛成一份具体 id 集
+>   （`SELECT p.id FROM projects p ${where}`，由本函数自持的 clauses 推导、不是重新
+>   实现一遍过滤），压一次 `$n` 推进**七个聚合子查询**（`WHERE project_id =
+>   ANY($n)`）。三种形态：非管理员 = 可见集 ∩ 过滤（必推）；管理员带过滤（keyword/
+>   projectIds）= 过滤后的集合（推）；管理员无过滤 = 不推（聚合对象本来就是全部
+>   项目，全表扫是诚实形状——与 stats.ts 的 resolveScope/pushScopeParam 同一对
+>   概念）。空集推一个永不命中的占位 id，不留「不推 = 全表聚合」的歧义形状。
+>   COUNT 切片传参（`params.slice(0, filterParamCount)`）——node-pg 对参数个数
+>   严格（P8-4 的教训），aggregateIds 的占位符不进 COUNT 的 bind message。
+> - **索引复核结论：零新索引**。七张表全部已有 project_id 前导索引
+>   （executions_project_created_at_idx / endpoints_project_id_idx /
+>   environments_project_id_name_key / test_cases_project_id_idx /
+>   schedules_project_created_at_idx / ci_tasks_project_created_at_idx /
+>   spec_cases_status_idx——环境表唯一键 (project_id, name) 前导列即 project_id，
+>   小表上 planner 自选 Seq Scan 是正确计划）。预聚合表（边界 17 的立项判据）不
+>   触发——`/dashboard` 前端已无调用方（统计走 `/stats/*`，P8-6 已改），这条路径
+>   只剩接口契约保留。
+> - **EXPLAIN (ANALYZE, BUFFERS) 实测**（dev 库 executions 154,382 行 / heap 215MB）：
+>   管理员无过滤（不推）原样 ~50ms 温存 / ~400ms 冷读（并行 Seq Scan——聚合对象
+>   就是全库，诚实形状）；非管理员小可见集（16 行 executions 的项目）下推后
+>   **0.087ms Index Scan**（executions_project_created_at_idx）；非管理员 = 大项目
+>   成员（154k 行）下推后 planner 仍选并行 Seq Scan（自己的行就是大多数，等价
+>   ~108ms）。**下推消灭的账是跨项目聚合**：非成员原本也在为全平台 executions 付
+>   全表聚合（817ms 的账记在这里）。结果一致性验证：下推前后同查询三列
+>   （execution_count/judged_count/passed_count）逐值相等。
+> - **零迁移、零前端改动**（`/projects` 第一刀已收缩的类型不变）。`pnpm check`
+>   通过；服务重启与门槛 8 的性能验收（`pg_stat_statements` Top 10 复核）按
+>   AGENTS.md 留给用户。P8 至此八个批次全部实现。
+>
+> > **P8 验收结论（2026-09-10，用户暂记通过）**：P8-1 ~ P8-8 全量暂记验收通过。
+> > 保留项：门槛 8 的实测半边（`pg_stat_statements` Top 10 复核、三档性能预算的
+> > 现场读数）依赖 P8-8 后的服务重启，随重启补验——P8-8 的 EXPLAIN 侧已全部
+> > 复核过（零新索引、下推形态三态实测）。
 
 ### 12.7 验收门槛
 
@@ -1352,10 +1953,22 @@ Flaky 判定（写死在 `lib/metrics.ts`，与通过率同处口径库）：窗
 5. 批量归因 20 条失败 ≤ 2 次点击 + 1 次提交。
 6. 非系统管理员的全局统计只含其可见项目；URL 直访别人的项目数据 403。
 7. 趋势折线 hover：十字线 + 常驻读数（时间/通过率/量）；点击跳转列表且时间窗正确。
-8. 90 天窗口出图 < 1.5s（超了就触发边界 17 的汇总表立项判据）。
+8. 性能预算三档验收（边界 17）：Readout 缓存命中 < 300ms（两次刷新验证缓存生效）；
+    **默认窗口 30d 全部段 < 800ms**；90d/180d 深挖 < 1.5s（仅此档触发汇总表立项判据）。
+    三段式页面分段渲染——最慢段加载中不阻塞其他段首屏（肉眼验证 + 断网单段验证）。
+    `/stats/*` 每条接口 `EXPLAIN (ANALYZE, BUFFERS)` 全部走 Index Scan；验收时
+    `pg_stat_statements` Top 10 里无统计类语句触发 Seq Scan（边界 23）。
+    人为构造超慢场景（如全项目 180d + 无索引前置关闭）返回 503 + 缩窗提示，
+    前端不白屏、连接池不堆积。
 9. Flaky 榜与人工观察一致（构造一条翻转用例验证判定）。
 10. MCP `set_failure_attribution` 写回后 `source='mcp'`；人工覆盖后变 `human`。
 11. 零新图表依赖（`package.json` 无 echarts/recharts/antv）。
+12. 看板 readout 的全局接口覆盖率/自动化覆盖率与 Top 10 反向榜同列口径一致；点读数
+    或榜行能落到对应项目的统计页（默认落地页，边界 22）。
+13. 失败 TopN 六维各自可出榜（流程/仓库用例两维用真实失败数据验证分组键：`target_name`
+    / `guessed_case_key`）。
+14. 进入项目（含面包屑「返回项目」）默认落在数据统计页；直访 `/projects/:id` 与
+    `/projects/:id/overview` 行为符合边界 22 的分叉。
 
 ---
 
@@ -1440,7 +2053,7 @@ session / token / function call**，链路是
 12. **不做**：语音、多轮记忆管理、知识库（agent 平台侧能力）、助手主动推送周报
     （那是 agent 平台的定时任务，不是平台功能）。
 
-### 13.1 数据库迁移：054_p9_assistant.sql
+### 13.1 数据库迁移：055_p9_assistant.sql
 
 ```sql
 ALTER TABLE project_settings ADD COLUMN IF NOT EXISTS assistant_enabled BOOLEAN NOT NULL DEFAULT false;
@@ -1520,7 +2133,7 @@ POST   /api/v1/notifications/read-all                   全部已读
 
 | 步 | 内容 | 产出 |
 | --- | --- | --- |
-| P9-1 | 迁移 054 + 通知表/inbox + 铃铛 + 列表页 + 两个新源回补 | 通知闭环（小红点 + 弹窗） |
+| P9-1 | 迁移 055 + 通知表/inbox + 铃铛 + 列表页 + 两个新源回补 | 通知闭环（小红点 + 弹窗） |
 | P9-2 | 助手代理五条路由 + SSE 转发 + 事件归一 | curl 能对话 |
 | P9-3 | 会话管理 + `assistant_enabled` 闸门 + 系统管理配置块 | 项目级开关可用 |
 | P9-4 | 聊天抽屉 UI（消息流/工具行/输入） | 手工验收链路 |
@@ -1706,7 +2319,7 @@ POST   /api/v1/notifications/read-all                   全部已读
 
 **边界决策（10 项）**
 
-1. **一个迁移：`053_p11_ownership.sql`**。14 张表各
+1. **一个迁移：`056_p11_ownership.sql`**。14 张表各
    `ADD COLUMN IF NOT EXISTS created_by / updated_by UUID REFERENCES users(id) ON DELETE SET NULL`。
    旧行 NULL 即可（项目未发布，无历史包袱，不回填——「数据兼容」纪律的正用）。
    索引只建 `(project_id, created_by)` 不建 updated_by：按创建人筛选是列表诉求，
@@ -1743,7 +2356,7 @@ POST   /api/v1/notifications/read-all                   全部已读
 10. **不做版本历史/diff/回滚**——那是 P10 14.3 的范围（「接口变更追踪」），本阶段只
     回答归属，不回答内容演变。P7 11.0 边界 16 已把同一件事归到那里。
 
-### 16.1 数据库迁移：053_p11_ownership.sql（示意）
+### 16.1 数据库迁移：056_p11_ownership.sql（示意）
 
 ```sql
 -- 14 张表同一模式，旧行 NULL 即可（不回填；项目未发布无历史包袱）
@@ -1760,7 +2373,7 @@ CREATE INDEX IF NOT EXISTS endpoints_project_created_by_idx ON endpoints(project
 
 | 项 | 方案 A | 方案 B | 触点 |
 | --- | --- | --- | --- |
-| 迁移 | 1 个文件，28 列 + 14 索引 | 0（复用 audit_logs） | `migrations/053_*.sql` |
+| 迁移 | 1 个文件，28 列 + 14 索引 | 0（复用 audit_logs） | `migrations/056_*.sql` |
 | INSERT | ~22 处写 created_by | ~22 处挂 create 审计 | routes/*.ts（14）+ mcpToolsWrite*（7）+ ingest.ts + lib/scripts.ts |
 | UPDATE | ~23 处写 updated_by | ~23 处挂 update 审计 | 同上 + caseSync / schedule / suiteMembers / alerts（系统路径除外，边界 3） |
 | DELETE | —（不记列） | ~14 处挂 delete 审计 | routes/*.ts + mcpToolsWrite* |
@@ -1769,7 +2382,7 @@ CREATE INDEX IF NOT EXISTS endpoints_project_created_by_idx ON endpoints(project
 
 ### 16.3 分批交付
 
-- **P11-1（第一批，方案 A）**：迁移 053 + 全部 INSERT/UPDATE 触点写 user + mapper 加
+- **P11-1（第一批，方案 A）**：迁移 056 + 全部 INSERT/UPDATE 触点写 user + mapper 加
   字段 + 11 个列表加列。验收：任一核心资源创建后能在列表看到创建人；换人编辑后
   更新人变化；系统路径（调度改 next_run_at）不显示人。
 - **P11-2（第二批，方案 B）**：AUDIT_ACTIONS 扩 42 动作 + 全写路径挂审计（成功后
