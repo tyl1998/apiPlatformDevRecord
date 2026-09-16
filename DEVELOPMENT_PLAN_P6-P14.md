@@ -1,18 +1,37 @@
-# P6–P11 阶段规划 — 用户权限 / 测试管理 / 数据统计 / 站内助手 / 性能·插件·版本 / 资产归属
+# P6–P14 阶段规划 — 用户权限 / 测试管理 / 数据统计 / 站内助手 / 性能·插件·版本 / 资产归属 / 个人中心·用户级 MCP / 新手教程 / 权限申请审批
 
-> 版本: v1.5（2026-09-04 确认范围与边界；2026-09-05 P10 并入；2026-09-07 P6-1~P6-5
+> 版本: v1.7（2026-09-04 确认范围与边界；2026-09-05 P10 并入；2026-09-07 P6-1~P6-5
 > 实现状态 + P6 暂记验收通过 + 13.6 后置增补「项目可见性两层 + 权限申请审批流」；
 > 2026-09-07 P11 立项——资产归属（列级 + 审计级），见十六章；2026-09-09 P7-1~P7-7
 > 实现状态 + P7 验收通过——含验收期四轮反馈的口径修订与范围收缩，见十一章；
 > 2026-09-09 P8 启动前核对——迁移编号顺延（P8 054 / P9 055 / P11 056，053 已被
-> P7 状态评审占用）与 P8-8 聚合子查询表数勘误（七张）；批次顺序与指标清单经现场
+> P7 状态评审占用；**2026-09-11 复核：P8 实占 054–056，P9 → 057（+ 收件口径变更的
+> 追加迁移 057b）、P11 → 058**）与 P8-8 聚合子查询表数勘误（七张）；批次顺序与指标清单经现场
 > 核对不变，见 12.6 末注；同日第二轮范围增补——看板 Top 10 反向榜、资产面四读数、
 > TopN 扩六维（+流程/仓库用例）、进入项目默认页改数据统计，见边界 19–22；
 > 2026-09-10 P8-1~P8-8 全部实现 + **P8 暂记验收通过**——含验收期多轮反馈修复
-> 与 P8-8 两刀性能收口，见十二章 12.6 末尾实现状态）
+> 与 P8-8 两刀性能收口，见十二章 12.6 末尾实现状态；2026-09-11 **P9 范围修订**
+> （用户确认，尚未实现）——账号操作并入助手（本地通道）、助手代理 provider 化
+> （多 provider + 加密 Key + JSON 导入，adapter 契约 + 注册表，v1 仅 nuwax、
+> 只接 agent 平台不接裸 LLM）、迁移顺延 057、新增 13.6 agent 方接入要求与
+> 对接契约（P11 同步顺延 058），见十三章 13.0 修订与 13.4 重排；
+> 2026-09-14 **P9-4 落地后范围修订**（用户四条反馈）——助手默认开启去项目闸门
+> （迁移 058）、用户级 agent 凭据 + 上游通用协议化（P9-4b，迁移 059；P11 → **060**）、
+> 会话 topic 自动标题，见 13.0 的 2026-09-14 修订块与 13.4.4/13.4.5 实现记录；
+> 2026-09-14 **P12 立项**——个人中心 + 用户级 MCP Token（token 归人、绑定归项目、
+> scope 放绑定上、工具面 projectId 参数化、read 补活体复查；全局层 /me 页集齐
+> 改密 / 通知查看全部 / MCP Token / agent 凭据挂点——P9-4b 悬置的「个人信息界面
+> 另行规划」在此兑现），见十八章；
+> 2026-09-16 **P13 立项**——新手教程（P9-7「教程骨架 + 主线 5 步 + 双 i18n」自 P9
+> 移出，P9 收窄为人物 + 聊天 + 站内通知），见十九章；
+> 2026-09-16 **P14 立项**——项目可见性两层 + 权限申请审批流（13.7 后置增补
+> 转正排期），见二十章
 > 归属: 本文件是 `DEVELOPMENT_PLAN.md` 的阶段扩编。四个新阶段插在 P5（MCP）之后、
 > 原 P6（性能/插件/版本，**已顺延为 P10**）之前；**P10 全章于 2026-09-05 自主计划
-> 十四章并入本文件**；**P11 于 2026-09-07 立项并入本文件十六章**。主文档只保留
+> 十四章并入本文件**；**P11 于 2026-09-07 立项并入本文件十六章；P12 于 2026-09-14
+> 立项并入本文件十八章；P13 于 2026-09-16 立项（P9-7 教程移出）并入本文件
+> 十九章；P14 于 2026-09-16 立项（13.7 后置增补转正）并入本文件二十章**。
+> 主文档只保留
 > 编号变更与指针，完整范围、边界、迁移、路由、批次与验收门槛以本文件为准。
 >
 > 排序依据（2026-09-04 用户确认）：
@@ -25,7 +44,7 @@
 >   （教程的 selector 不能对着还在动的页面写）。
 >
 > 章节映射（本文件 → 主计划）：P6 = 十、P7 = 十一、P8 = 十二、P9 = 十三、
-> P10 = 十四、P11 = 十六。主计划原「十、P6 性能/插件/版本」已顺延为 P10，并于
+> P10 = 十四、P11 = 十六、P12 = 十八、P13 = 十九、P14 = 二十。主计划原「十、P6 性能/插件/版本」已顺延为 P10，并于
 > 2026-09-05 连章并入本文件（主计划原位只留指针）；P11 同款，主计划只留指针
 > （见 16.5 之后的同步记录）。
 
@@ -1972,9 +1991,13 @@ Flaky 判定（写死在 `lib/metrics.ts`，与通过率同处口径库）：窗
 
 ---
 
-## 十三、P9 — 站内助手（人物 + 聊天 + 新手教程 + 站内通知，约 4 周）
+## 十三、P9 — 站内助手（人物 + 聊天 + 站内通知，约 4 周）
 
-### 13.0 P9 范围与边界（2026-09-04 确认）
+> **新手教程已于 2026-09-16 自 P9-7 整项移出至 P13**（用户确认），见十九章。
+> 本章范围收窄为人物 + 聊天 + 站内通知；下文涉及教程的边界 7、P9-7 批次与
+> 验收门槛 10 均已删除线处理并留指针。
+
+### 13.0 P9 范围与边界（2026-09-04 确认；2026-09-11 修订扩界）
 
 **定位**
 
@@ -1987,12 +2010,97 @@ session / token / function call**，链路是
 
 平台在这条链里出现两次：哑管道 + 工具提供方。
 
+**2026-09-11 范围修订（用户确认，四条）**：
+
+1. **账号操作并入助手**：系统设置快捷入口、登出、本人重置密码进助手，全部走
+   **本地通道**（指令表 + 确认卡片 + 本人 JWT），不经过外部 agent——上游挂了这
+   三件事仍可用。系统管理页不搬家（管理员面：用户/审计/workers 留在页面），助手
+   是入口不是替代；管理员重置他人密码不进助手（页面操作，指令可导航）。
+2. **助手代理 provider 化**：上游配置从「全局一份环境变量」改为**系统级 provider
+   表**——多 provider、AES-GCM 加密 Key、JSON 导入/导出、测试连接、默认切换
+   （原边界 4 作废改写）。代理底座按 **adapter 契约 + 注册表**实现（形制照
+   `lib/adapters`：一个 type 一个实现文件 + 查表分发），v1 只实现 `nuwax` 一个
+   adapter；第二个 adapter（Dify / Coze / 公司自研平台）等真实平台出现再写，
+   契约不变。agent 方接入要求与对接契约见 13.6。
+3. **只接 agent 平台，不接裸 LLM**（收界）：provider 资格线 = 有会话管理 + 流式
+   + 历史 API，缺一不叫 agent 平台。裸 OpenAI 兼容端点（one-api / vLLM / 自建
+   LLM 服务）没有会话存储：接进来要么平台自己管上下文（冲掉「平台不实现 agent」
+   边界）、要么退化成接不进 `/mcp` 的通用聊天框（无工具面，「站内」二字不成立）。
+   真想用裸 LLM 的人，在 Nuwax/Dify 里包一个 agent 再接我们——门户守在 agent
+   平台这层。
+4. **连带简化**：无状态 provider 不存在 → 多轮上下文与会话历史**全部由 agent 方
+   持有**，平台只代理展示、不存不缓存不代管窗口（「谁有会话谁记上下文」）。
+   provider 选择权第一版平台默认一份（`is_default`），用户自选后置到 preferences。
+
 **新增范围**（用户 2026-09-04 确认）：**站内通知并入本阶段**——通知中心（铃铛小红点
 + 弹窗提醒）是助手壳的一部分；P6/P7 落地的成员变更、计划指派在此回补通知生产端。
 
+**2026-09-14 修订（用户四条反馈，P9-4 落地后）**：
+
+1. **助手默认开启、取消项目闸门**（作废 2026-09-11 边界 4 末句「项目级仍然只有
+   `project_settings.assistant_enabled`」与 13.4.3 的项目侧「站内助手」页）：助手是
+   「用户 × 会话」的功能，凭据后续也走用户级（见下条），项目管理员不该替成员决定
+   开不开。迁移 **058** DROP 该列；`AssistantPage` / settings 的 assistantEnabled /
+   导航项全部摘除；抽屉圆钮常驻。原验收门槛 1（闸门 404）随之作废。
+2. **provider = 通用协议模板 + 用户级凭据**（批次 **P9-4b**，取代「按用户自选
+   provider 后置 preferences」的旧口径；**2026-09-14 已实现**，见 13.4.5）：
+   - provider 行降格为**通用协议模板**——4 个接口（建会话 / 发消息 SSE / 停止 /
+     历史）+ SSE 事件映射 + 认证模板，外加 `user_params`（用户选这个上游时要填的
+     参数模式，如 nuwax 的 agentId、apiKey、mcpToken）。**换平台 = 填一份配置，
+     零开发**（作废 2026-09-11 边界 12 的「不做协议映射引擎」与边界 1 的 adapter
+     注册表模型——`lib/assistant/nuwax.ts` 与注册表删除，引擎 `engine.ts` 按配置
+     执行；存量 nuwax 行由迁移 059 原地翻译成标准协议配置）；
+   - 每个用户自配凭据（`assistant_user_agents` 表，secret 项 AES-GCM 加密、接口只
+     回键名）、自选默认（第一个配置的自动戴默认帽）；**系统行不再存共享 Key、
+     不留兜底**——用户原话「要配置自己的」；
+   - 未配置时抽屉内引导配置（「设置」chip 直接开配置卡，不再跳系统管理）；配置
+     卡的**过渡落点在抽屉内**（最小可用），P12 个人中心落地后扩为该页的 agent
+     凭据 tab（见十八章）；
+   - mcpToken 暂存不用（聊天管道不需要它——引擎只带认证头；后续 MCP 身份绑定
+     （13.6 L3）再消费）；管理面「测试连接」带临时参数（不落库），因为系统行上
+     没有可测的 Key。
+3. **会话标题自动生成**：首条消息折叠摘要落 `topic`（30 字符 + 省略号，服务端
+   在消息路由的 fire-and-forget 里写），抽屉下拉从时间戳换成可读标题。
+4. **人物独一无二** = P9-6 既定范围（种子 `users.id` 确定性生成），无需修订。
+
+**2026-09-15 修订（P9-4c 立项，用户确认）**：聊天抽屉两件事——
+
+1. **页面上下文注入（「识别意图」的落点）**：意图解析的主体是 agent（LLM），平台
+   不做意图分类器；平台做的是把「用户发消息时正站在哪」变成明确元数据随消息送上
+   （例：在接口工作台说「改一下当前接口的断言」时，agent 拿到 endpointId + 正在
+   编辑的 caseId，不用猜「当前」指谁）。管道五环：
+   - **采集**（前端）：`pageContextStore` + `usePageContext()`。URL 是底座（route +
+     search——列表筛选大多已在 URL），关键工作台页额外注册组件态（activeCase /
+     selectedNode / 抽屉 executionId 这些不在 URL 里的）；路由切换即清。未注册页
+     只带 route（路径里的实体 id 仍在）；全局层页面没有抽屉，不采不注。
+   - **透明**（前端）：输入区上方上下文 chip（面包屑摘要 + 点开看全量 JSON +
+     「本条不带上下文」开关）——用户看得见 agent 会拿到什么，信任的关键。
+   - **注入**（后端）：消息路由把 context 压成紧凑 JSON、封 ```apitest-page-context
+     围栏、前缀拼进转发 message——**协议配置零改动**（`{{message}}` 渲染的就是拼好
+     的全文，只有 message 一个字段的上游也能吃）。topic 生成仍用用户原文；历史代理
+     回放时服务端把围栏剥掉（气泡永远只显示用户打的字）；序列化封顶 ~2KB + 顶层键
+     白名单 + 值浅校验。
+   - **消费**（agent 方，13.6 契约补条）：收到 page-context 块必须优先按它解析
+     「当前/这个/刚才」类指代（拿 ID 调 MCP read 工具取全量），块里没有的信息要
+     反问用户，不许猜。
+   - **安全**：只带标识符 + 面包屑（name/method/url），**secret 值一个不进**（环境
+     密钥绝不进上下文）；发给的是用户自己配的 agent，其 MCP token 本就 read scope、
+     写走 proposal + 本人 JWT——注入不抬权。
+2. **Markdown / 文本编排渲染**：assistant 文本块引 `react-markdown` + `remark-gfm`
+   （仅此两个新依赖；默认不吃原始 HTML，XSS 面为零；不引语法高亮）。覆盖
+   标题/列表/引用/表格/行内代码/围栏代码块（mono + 横向滚动 + 限高）/链接外开/
+   任务列表/删除线。流式期间半张表格、未闭合代码块容忍渲染，token 到齐自然收敛。
+   **8.13 边界 19 在聊天场景改写**为「react-markdown 安全渲染」——报告页维持
+   pre-wrap 原边界不动。`apitest-proposal` 围栏渲染为代码块，P9-5 预览卡扫描不受
+   影响。用户气泡 / 错误气泡 / 工具行维持纯文本。
+
+批次切分：**P9-4c-1 上下文管道**（最重要，含后端）、**P9-4c-2 Markdown 渲染**
+（独立且小）。零新迁移。
+
 **后置增补之二**（用户 2026-09-07 提出）：**项目可见性两层 + 权限申请审批流**——非
 项目成员在项目列表**看得到**项目但**进不去**（发现层开放、内容层不变）；站内信与人物
-落地后，用审批流自助申请权限。取向与现状锚点见 13.6（记录取向，不排期）。
+落地后，用审批流自助申请权限。取向与现状锚点见 13.7；**2026-09-16 已立项为 P14**
+（二十章），不再是「记录取向不排期」。
 
 **上游能力核对**（`智能体平台-第三方接入接口文档.md`，2026-09-04 引入）：
 
@@ -2002,15 +2110,20 @@ session / token / function call**，链路是
 | 能接受外部传入会话 id？ | ⚠️ 不传 id，但会话由平台创建（§2.1）且历史可查（§2.5）——平台侧记 `conversationId ↔ (project, user)` 映射即可，无需自存 transcript |
 | 能连任意外部 MCP Server？ | ✅ `STREAMABLE_HTTP` 安装方式（§3），P5 的无状态 `/mcp` 走兼容姿态可接 |
 | 能按会话注入凭据？ | ❌ 未提及（API Key 平台级绑定智能体，§鉴权）——**L3 定案走 proposal-first**，P5-3 的该实测项降为「确认有无动态 Header 能力，有则可升级」 |
-| 能转述 elicitation / MRTR？ | ❓ 文档无此概念；按「不能」处理——delete 在聊天里降级为「请到页面上操作」提示（P5 9.4.1 的降级分支） |
+| 能转述 elicitation / MRTR？ | ❓ 文档无此概念；按「不能」处理——delete 在聊天里降级为「请到页面上操作」提示（P5 9.4.1 的降级分支；职责三层拆解与实测判定方法见 13.6） |
 
-**边界决策（12 项）**
+**边界决策（15 项；2026-09-11 改写 1/4/6、增补 13–15，其余为 2026-09-04 原案）**
 
-1. **助手代理归一事件形状，不透传上游**：`MESSAGE` 的 token 流原样拼；`PROCESSING`
+1. **事件归一升格为 adapter 契约（2026-09-11）**：归一事件 `token(text)` /
+   `tool(name, status)` / `done(fullText)` / `error(message)` 是代理路由与前端
+   唯一认知的事件形状；每个 adapter 只干「把自家协议翻译成归一事件」一件事，
+   路由层按注册表查表分发（形制照 `lib/adapters/index.ts`）。Nuwax 映射：
+   `MESSAGE` 的 token 流原样拼；`PROCESSING`
    映射为「正在调用 list_endpoints…」的工具行（**用户能看见 AI 在调什么工具——信任
    的关键**）；`HEART_BEAT` 不转发，代理自己按 15s 发 SSE 注释行保活（长空闲连接
    防断，`routes/stream.ts:43` 的既有写法）；`ERROR` 映射为一条错误气泡 + 结束帧。
-   上游加字段/改字段名时不让前端跟着改。
+   上游加字段/改字段名时不让前端跟着改——**换上游更是零改动**（新增一种 agent =
+   加一个 adapter 文件 + 注册表一行 + 系统管理多一个 type 选项）。
 2. **对话正文不落库**（9.8 既定）：transcript 在 agent 平台侧（`GET …/messages` 可
    查），平台只存 `assistant_conversations` 映射行。理由照旧——再存一份等于把可能含
    业务数据的文本抄成两份。
@@ -2018,26 +2131,35 @@ session / token / function call**，链路是
    发 `read` scope；写操作由 agent 产出**草稿**（proposal），前端渲染成预览卡，用户
    点「确认应用」时**用自己的 JWT 调既有 REST**。零新增写库路径；`canAccess` 与审计
    全程落在真人。上游无按会话注入凭据能力（见上表），选项 1/2 的前提不成立。
-   `ResponseScriptEditor.tsx:20` 的受控组件形态是草稿落点。
-4. **上游配置全局一份**：`assistant` 配置块（baseUrl + agentId + apiKey，Key 走
-   `lib/crypto.ts:19` AES-GCM——要拿明文调上游，所以加密而非哈希）放**系统管理**
-   （不是 project_settings——上游 Key 与 agentId 是平台级运维资产，每个项目一份是
-   错的抽象层级）；项目级只有 `project_settings.assistant_enabled`（默认 false，
-   照 P5 边界 12 的 `mcp_enabled` 同款：服务端真不服务，不是藏入口）。
+   `ResponseScriptEditor.tsx:20` 的受控组件形态是草稿落点；草稿在回复正文中的围栏
+   标记格式（`apitest-proposal`）见 13.6 对接契约。
+4. **上游配置 = 系统级 provider 表（2026-09-11 改写，原「全局一份环境变量」作废）**：
+   `assistant_providers`（name / type / config JSONB / capabilities / api_key_
+   encrypted / enabled / is_default），多份并存 + JSON 导入导出 + 测试连接 + 默认
+   切换，放**系统管理**（不是 project_settings——上游配置是平台级运维资产，每个
+   项目一份是错的抽象层级）。Key 照 `notification_channels` 先例：AES-GCM 加密
+   （`lib/crypto.ts`——要拿明文调上游，所以加密而非哈希）、写库即密、接口只回
+   「已配置」、PATCH 三态补丁。项目级仍然只有 `project_settings.assistant_enabled`
+   （默认 false，照 P5 边界 12 的 `mcp_enabled` 同款：服务端真不服务，不是藏入口）。
 5. **人物：纯 Canvas 2D，种子 `users.id`**（9.8 既定）。搬 `hand-drawn-character-
    creator.html` 76-584 行（three.js 从 588 行起不搬），改画单张 2D canvas；动画只留
    眨眼、遵守 `prefers-reduced-motion`。头像不落库（确定性生成，前端每次画）；
    「换一个形象」用 `preferences.avatarSeed` 覆盖（不动 `users.id` 语义——改名≠换人，
    但允许本人主动换）。**`nightmare` 物种（12% 概率长角/锯齿嘴/空洞眼）默认移出**
    ——企业内网工具里它只会被当 bug 报；保留物种代码，皮肤开关藏进 preferences。
-6. **聊天窗两层**：本地指令集（主题/语言/导航/打开某页/当前项目切换说明）走前端
-   命令表（前缀匹配，命中即执行并回系统气泡）——**agent 平台挂了这些仍可用**；
-   未命中走自然语言通道。
-7. **新手教程数据驱动 + 一条主线**：骨架 `{ route, selector, i18nKey }[]` JSON +
-   `preferences.onboarding` 记完成态。本阶段只做**一条 5 步主线**（登录 → 建项目 →
-   建接口 → 跑一次 → 看报告）——P6/P7/P8 刚动过导航与页面，selector 只对定型页面
-   写。交互用**侧边卡片 + 目标元素描边**（不用遮罩高亮——那要处理滚动跟随与定位
-   计算，两倍复杂度一倍价值）。`data-tour` 属性标靶点（CSS 类重构不破坏教程）。
+6. **聊天窗两层 + 账号指令（2026-09-11 扩界）**：本地指令集（主题/语言/导航/打开
+   某页/当前项目切换说明）走前端命令表（前缀匹配，命中即执行并回系统气泡）——
+   **agent 平台挂了这些仍可用**；未命中走自然语言通道。**新增账号指令**：
+   `/设置`（抽屉内快捷设置卡：主题/语言直接改写 preferences，或导航系统管理页）、
+   `/登出`（确认卡 → 前端登出回登录页，零新路由）、`/改密码`（受控表单卡：当前
+   密码 + 新密码 ×2 → 既有 `POST /auth/change-password`，本人 JWT）。抽屉常驻
+   快捷 chips（新会话/设置/改密码/登出），显式入口不靠猜意图；含密码/登出等
+   账号词的消息本地拦截引导到卡片，不转发上游。
+ 7. ~~**新手教程数据驱动 + 一条主线**~~（**2026-09-16 移出至 P13**，用户确认；
+    骨架 `{ route, selector, i18nKey }[]` JSON、`preferences.onboarding` 记完成态、
+    一条 5 步主线（登录 → 建项目 → 建接口 → 跑一次 → 看报告）、侧边卡片 +
+    目标元素描边（不用遮罩高亮）、`data-tour` 属性标靶点等完整边界原样随迁，
+    见 19.0。）
 8. **站内通知是一张新表，不并入 `notification_deliveries`**——那张记的是外发投递
    证据（HTTP 状态/error），站内通知是给用户看的消息（已读态）。两者语义不同。
 9. **通知生产端**复用既有三个终态订阅点（`scheduler.ts:39-75` 的 alert 派发 / 套件
@@ -2051,18 +2173,56 @@ session / token / function call**，链路是
     SSE 推送要把跨项目的用户级通道引进来（现有 `stream.ts` 是项目级），为一个计数
     不值。
 12. **不做**：语音、多轮记忆管理、知识库（agent 平台侧能力）、助手主动推送周报
-    （那是 agent 平台的定时任务，不是平台功能）。
+    （那是 agent 平台的定时任务，不是平台功能）、**裸 LLM 直连**（修订 3）、
+    **协议映射引擎**（custom adapter——用 JSON 描述协议本身，必然长成蹩脚小语言；
+    真冒出陌生协议时写一个专用 adapter 文件更便宜，等同类怪协议出现第三个再议）、
+    **按用户自选 provider**（后置 preferences）。
+13. **provider 资格线与能力面（2026-09-11）**：`type` 必须是注册表内已实现的
+    adapter（v1 仅 `nuwax`，导入未知 type 报错）；必备能力 = 建会话 + SSE 流式 +
+    按会话查历史；`stop` 可选（无则按钮隐藏、前端断流即可）；上游「会话列表」
+    接口**不需要**——抽屉列表读 `assistant_conversations` 映射表（topic 一行标题
+    不算 transcript，边界 2 不破）。
+14. **账号操作不外发（2026-09-11）**：密码不进消息流、不发上游——改密走受控
+    表单卡 + `POST /auth/change-password` 本人 JWT；登出纯前端清 token；`pwd_epoch`
+    语义与页面改密一致。
+15. **无默认 provider 的姿态**：`assistant_enabled=true` 但平台无启用的默认
+    provider 时，助手路由组返回明确的「未配置」错误（不是 404），前端圆钮显示
+    「未配置」态并引导管理员到 provider 面板。
 
-### 13.1 数据库迁移：055_p9_assistant.sql
+### 13.1 数据库迁移：057_p9_assistant.sql
+
+> 编号顺延：原计划 055/056 已被 P8 占用（055 执行记录分区部分索引、056 归因
+> bug_url），P9 顺延为 **057**（2026-09-11 复核，与 12.6 P8-8 末注一致）；
+> P11 同步顺延为 058（16 章）。
+>
+> **058 已被 P9-4 修订占用（2026-09-14）**：`058_p9_assistant_always_on.sql`
+> DROP `project_settings.assistant_enabled`（助手默认开启）。
+> **059 已被 P9-4b 占用（同日）**：`059_p9_assistant_generic.sql`（通用协议 +
+> 用户级 agent，13.0 修订块第二条）——P11 由 058/059 连续占用后再顺延为 **060**
+> （16 章编号同步）。
 
 ```sql
 ALTER TABLE project_settings ADD COLUMN IF NOT EXISTS assistant_enabled BOOLEAN NOT NULL DEFAULT false;
 
+CREATE TABLE IF NOT EXISTS assistant_providers (
+  id UUID PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
+  type TEXT NOT NULL,                      -- v1 仅 'nuwax'；注册表外 type 服务端拒绝
+  config JSONB NOT NULL,                   -- 类型特有参数（baseUrl / agentId 等）
+  capabilities JSONB NOT NULL,             -- {stop, history, attachments}：type 预设，导入 JSON 可收窄
+  api_key_encrypted TEXT,                  -- AES-GCM（lib/crypto.ts）；只写不读，接口回「已配置」
+  enabled BOOLEAN NOT NULL DEFAULT true,
+  is_default BOOLEAN NOT NULL DEFAULT false,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE TABLE IF NOT EXISTS assistant_conversations (
   id UUID PRIMARY KEY,
+  provider_id UUID NOT NULL REFERENCES assistant_providers(id) ON DELETE CASCADE,
   project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  upstream_conversation_id TEXT NOT NULL,   -- Nuwax 的 conversationId
+  upstream_conversation_id TEXT NOT NULL,   -- 上游 conversationId（Nuwax 为 Long 文本）
   topic TEXT NOT NULL DEFAULT '',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   last_active_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -2087,19 +2247,36 @@ CREATE INDEX IF NOT EXISTS notifications_user_created_idx
   ON notifications (user_id, created_at DESC);
 ```
 
-上游连接配置（baseUrl/agentId/apiKey）不建表——**环境变量**
-（`ASSISTANT_BASE_URL` / `ASSISTANT_AGENT_ID` / `ASSISTANT_API_KEY`，进
-`.env.example`）。理由：它是部署期资产（与 `JWT_SECRET` 同类），换它等于换上游，
-不是运行期配置；且避免「Key 在库里、库被 MCP 读」的递归暴露面。
+**配置存储决策反转（2026-09-11）**：原「baseUrl/agentId/apiKey 走环境变量
+（`ASSISTANT_BASE_URL` / `ASSISTANT_AGENT_ID` / `ASSISTANT_API_KEY`，部署期资产）」
+方案作废——用户要求运行期可配置、可多份、可 JSON 导入，落成 `assistant_providers`
+表。原顾虑（Key 在库里、库被 MCP 读）由既有先例承接：AES-GCM 加密 + 只写不读 +
+PATCH 三态补丁（`notification_channels.ts` 同款）、MCP 工具面不暴露系统级表、
+provider 管理路由仅系统管理员。
+
+`assistant_conversations.provider_id`：会话路由按会话行上的 `provider_id` 取
+adapter——默认 provider 只决定**新建会话**归属，切换默认后旧会话照常收发；
+provider 删除级联删会话（`ON DELETE CASCADE`）。
 
 ### 13.2 后端新 API
 
 ```
-# 助手（项目级；assistant_enabled=false 时整组 404，与 /mcp 同款闸门）
-POST   /api/v1/projects/:id/assistant/conversations          创建（转发上游 conversation/add）
-GET    /api/v1/projects/:id/assistant/conversations          我的会话列表
-POST   /api/v1/projects/:id/assistant/conversations/:id/message   转发消息，SSE 流回（hijack）
-POST   /api/v1/projects/:id/assistant/conversations/:id/stop      转发上游 stop
+# provider 管理（系统管理员，全局层）
+GET    /api/v1/system/assistant/providers               列表（Key 只回「已配置」）
+POST   /api/v1/system/assistant/providers               创建（type 必须在注册表内）
+PATCH  /api/v1/system/assistant/providers/:id           更新（secret 三态补丁，同通知渠道）
+DELETE /api/v1/system/assistant/providers/:id           删除（会话级联，见 13.1）
+POST   /api/v1/system/assistant/providers/:id/test      测试连接：建会话 → 发 ping → 归一事件回显
+POST   /api/v1/system/assistant/providers/:id/set-default
+POST   /api/v1/system/assistant/providers/import        JSON 导入（{name,type,config,capabilities}，不含 Key）
+GET    /api/v1/system/assistant/providers/:id/export    JSON 导出（永不带 apiKey）
+
+# 助手（项目级；assistant_enabled=false 时整组 404，与 /mcp 同款闸门；
+#      开启但全局无默认 provider 时回「未配置」错误，非 404——边界 15）
+POST   /api/v1/projects/:id/assistant/conversations          创建（按默认 provider，转发上游 conversation/add）
+GET    /api/v1/projects/:id/assistant/conversations          我的会话列表（读映射表，不调上游）
+POST   /api/v1/projects/:id/assistant/conversations/:id/message   转发消息，SSE 流回（hijack；按会话的 provider_id 取 adapter）
+POST   /api/v1/projects/:id/assistant/conversations/:id/stop      转发上游 stop（provider 无此能力时 400）
 GET    /api/v1/projects/:id/assistant/conversations/:id/messages  历史代理（转发上游，带缓存头）
 
 # 通知（跨项目，用户级）
@@ -2120,31 +2297,648 @@ POST   /api/v1/notifications/read-all                   全部已读
 - **助手抽屉**：右下角常驻圆钮（人物头像 32px）→ 展开 420px 抽屉（头像 96px +
   会话切换 + 消息流 + 输入框）。消息流支持：markdown 纯文本（照 8.13 边界 19 的
   pre-wrap 纪律，不引渲染器）、工具调用行、**proposal 预览卡**（草稿 + 差异摘要 +
-  「确认应用 / 放弃」）。
+  「确认应用 / 放弃」——扫描 `apitest-proposal` 围栏渲染，格式见 13.6）。
+  **快捷 chips（2026-09-11）**：输入框上方常驻 新会话 / 设置 / 改密码 / 登出
+  四枚，显式入口不靠猜意图。无默认 provider 时圆钮显示「未配置」态并引导管理员。
+- **provider 管理面板（2026-09-11，系统管理页，仅系统管理员）**：类型选择
+  （注册表驱动）+ 按 type 渲染参数表单（config schema）+ Key 三态输入 +
+  测试连接（归一事件实时回显）+ JSON 导入/导出 + 默认切换 + 启停。
 - **人物生成器**：`lib/avatar.ts`（种子 → 物种/五官/配色确定性生成）+ 两个尺寸
   React 封装。眨眼动画仅抽屉打开时运行（Quiet Console「全应用只允许一个环境动画」
   ——与在飞请求呼吸点不同时出现）。
-- **新手教程**：`lib/tour.ts` + `TourCard.tsx`（侧边卡片 + `data-tour` 描边）+ 一条
-  主线的步骤 JSON（双 i18n）。首登自动触发（`preferences.onboarding.mainDone`）。
 - **本地指令表**：`/主题 深色`、`/语言 en`、`/打开 接口管理`……前缀匹配 + 回车直发
-  兜底。
+  兜底。**账号指令（2026-09-11）**：`/设置`、`/登出`、`/改密码` 三条 + 账号词
+  本地拦截（边界 6/14），卡片形态与快捷 chips 同款。**输入即识别（2026-09-16 增补，
+  见 13.4.11）**：输入框上方候选浮层，边打边挑指令名与参数（主题值 / 语言值 / 页面名），
+  ↑↓ 选、Tab 补全、点选等价于 Tab。
 
-### 13.4 实施顺序（P9-1 … P9-8）
+### 13.4 实施顺序（P9-1 … P9-8，2026-09-11 重排：provider 化与账号指令并入对应批次；2026-09-16 修订：P9-7 教程移出至 P13，编号不复用、P9-8 收尾保留）
 
-| 步 | 内容 | 产出 |
-| --- | --- | --- |
-| P9-1 | 迁移 055 + 通知表/inbox + 铃铛 + 列表页 + 两个新源回补 | 通知闭环（小红点 + 弹窗） |
-| P9-2 | 助手代理五条路由 + SSE 转发 + 事件归一 | curl 能对话 |
-| P9-3 | 会话管理 + `assistant_enabled` 闸门 + 系统管理配置块 | 项目级开关可用 |
-| P9-4 | 聊天抽屉 UI（消息流/工具行/输入） | 手工验收链路 |
-| P9-5 | 本地指令表 + proposal 预览卡（草稿 → JWT 应用） | 闭环「AI 起草、人确认」 |
-| P9-6 | 人物生成器（Canvas 2D 移植 + 头像挂点 + 换形象） | 形象可见 |
-| P9-7 | 教程骨架 + 主线 5 步 + 双 i18n | 新用户引导可用 |
-| P9-8 | 收尾：上游异常演练（断流/限流/ERROR 事件）+ 验收 | 门槛全过 |
+| 步 | 内容 | 产出 | 状态 |
+| --- | --- | --- | --- |
+| P9-1 | 迁移 057（providers + conversations + notifications）+ inbox + 铃铛 + 列表页 + 两个新源回补 | 通知闭环（小红点 + 弹窗） | 已实现（2026-09-11，见 13.4.1） |
+| P9-2 | 代理底座 provider 化：adapter 契约 + 注册表 + nuwax 实现 + 助手五条路由 SSE + 事件归一；**联调实测清单**（13.6：elicitation/MRTR 转述 + 按会话注入凭据两项问询） | curl 能对话 | 已实现；stg 联调正常流式 + e2e 8/8 已过；13.6 两项问询已答复（均不支持，见 13.4.2）——功能请求 `智能体平台-MCP支持需求.md` 待 Nuwax 排期 |
+| P9-3 | provider 管理：CRUD + 加密 Key + JSON 导入导出 + 测试连接 + `assistant_enabled` 闸门 + 无默认 provider 引导 | 运行期可换上游 | 已实现（2026-09-11，见 13.4.3） |
+| P9-4 | 聊天抽屉 UI（消息流/工具行/输入/快捷 chips） | 手工验收链路 | 已实现（2026-09-14，见 13.4.4；同日修订：助手默认开启 + topic 标题，迁移 058） |
+| P9-4b | 用户级 agent 凭据 + 上游通用协议化（2026-09-14 修订新增）：系统 provider = 通用协议模板（4 接口 + SSE 映射 + 用户参数模式），用户自配 agentId/apiKey/mcpToken、未配置时抽屉内引导 | 每人能用自己的 agent；换平台零开发 | 已实现（2026-09-14，见 13.4.5） |
+| P9-4c | 聊天窗口 Markdown 渲染 + 页面上下文注入（2026-09-15 修订新增）：上下文采集/透明/注入/消费/安全五环 + react-markdown 文本编排 | 「当前接口」类指代可解析；回复排版可读 | 已实现（2026-09-15，见 13.4.6） |
+| P9-5 | 本地指令表（主题/语言/导航 + 账号指令卡 + 敏感意图拦截）+ proposal 预览卡（草稿 → 本人 JWT 应用） | 「AI 起草、人确认」+ 账号自助闭环 | 已实现（2026-09-15，见 13.4.7） |
+| P9-6 | 人物生成器（Canvas 2D 移植 + 头像挂点 + 换形象） | 形象可见 | 已实现（2026-09-16，见 13.4.8） |
+| ~~P9-7~~ | ~~教程骨架 + 主线 5 步 + 双 i18n~~ **2026-09-16 移出至 P13**（见十九章，原编号作废不复用） | 新用户引导可用（随迁 P13） | 已移出 |
+| P9-8 | 收尾：上游异常演练（断流/限流/ERROR 事件）+ 验收 | 门槛全过 | 已实现（2026-09-16，见 13.4.10）；演练物料 `apitest-e2e-python/drill/`，验收按 AGENTS.md 待手工 |
+
+#### 13.4.1 P9-1 实现状态（2026-09-11）
+
+- **迁移 057**（`057_p9_assistant.sql`）：`project_settings.assistant_enabled`
+  （默认 false，照 mcp_enabled 先例）+ `assistant_providers`（name UNIQUE / type
+  CHECK v1 仅 'nuwax' / config / capabilities / api_key_encrypted / enabled /
+  is_default）+ `assistant_conversations`（user 索引、provider 级联删）+
+  `notifications`（kind 五值 CHECK、unread 部分索引 + (user, created_at DESC)
+  索引、project_id SET NULL 活过项目删除）。providers / conversations 两张表
+  本批只立结构，路由在 P9-2 / P9-3。**057b**（`057b_p9_notification_recipients.sql`，
+  收件口径变更的追加迁移）：`execution_index.triggered_by`（ON DELETE SET NULL，
+  与 pipeline_runs 038 同款）——058 已被 P11 预留，字母后缀照 039b 先例。
+- **`lib/inbox.ts`**：两个入口按收件口径分流（**2026-09-11 用户确认修订**：
+  alert / suite_result / ci_result 从「全体成员」改为「谁触发发给谁」，非人触发
+  不发——受众不明确的广播只是噪声，需要关注定时 / Webhook 结果的人已由站外
+  渠道覆盖；member_change / plan_assign 维持全员 / 单人原口径）：
+  - `deliverInbox(projectId, kind, title, body, link, excludeUserId)`——一次
+    `INSERT … SELECT` 全体成员（含 viewer，边界 9），`excludeUserId` 给「移除成员」
+    用（被移除的人下次请求就 403，再发深链只会制造打不开的入口）；
+  - `deliverInboxToUser(projectId, userId, …)`——定点发给触发人，`userId` 为空
+    **不发**（宁缺毋滥：发给错误的人比没有更糟，他会开始忽略铃铛）。
+  两者都 fire-and-forget（`.catch` 只记 console，通知写失败不拖垮业务事务，
+  `writeAuditLogAsync` 同款取舍）。
+- **通知四条 REST**（`routes/notifications.ts`，用户级无项目前缀，`currentUser`
+  即守卫）：列表分页（`unread=1` 筛选 + projectName 读时 LEFT JOIN 快照）、
+  未读数（轮询端点）、单条标读（他人行 404 不泄露存在性）、全部已读
+  （COALESCE 保首次阅读时间）。`mapUserNotification` 进 `models/types.ts`
+  （snake→camel 边界纪律）。
+- **五个生产源全部接上**：
+  - **member_change 两处写点三处调用**（`routes/members.ts`）：POST upsert（新
+    加入 / 角色变更两态文案）、PATCH 改角色、DELETE 移除（excludeUserId）。
+  - **plan_assign**（`routes/testPlans.ts` 的项 PATCH）：assignee 键显式变了才发
+    （BEFORE CTE 取改前值比对——RETURNING 里读到的已是改后行）；指派给谁发谁
+    （单收件人不走成员扇出，直接插行），取消指派不发（「没有你的事了」不构成
+    一条需要点击的通知）。
+  - **alert / suite_result / ci_result 三处既有订阅点定点加发**（`lib/alerts.ts`，
+    收件口径见上）：触发人落在 `execution_index.triggered_by`（套件 / 流程，迁移
+    **057b** 补的列——057 已应用只能前向加文件；CI 用 `pipeline_runs.triggered_by`
+    038 既有）。手动 / MCP execute / 「立即运行」都带人；调度器 / Webhook 不带
+    （`TriggerContext` 扩 `userId`，非人触发缺省 → 站内不发）。深链直指报告页 /
+    run 详情页；外发渠道照旧——站内与外发解耦。
+- **前端**：
+  - `api.ts` 通知四条 + `UserNotification` 类型；`stores/notificationsStore.ts`
+    （zustand：未读数 + 最近 10 条 + loaded 旗——两个壳的铃铛读同一份，轮询只跑一份）；
+  - `hooks/useNotifications.ts`（`useNotificationPolling` 挂在 Root：60s 轮询 +
+    窗口获焦即拉（边界 11）+ 新到达 antd notification 弹窗（边界 10）——**首轮只定
+    基线不弹**，存量未读不轰炸；401 静默由拦截器接管）；
+  - `BellMenu.tsx`：顶栏铃铛（未读 badge 99+ 封顶）+ Popover 下拉最近 10 条（点击
+    即读 + 深链走 navGuard confirmLeave——从编辑页经通知离开时未保存守卫照常拦）+
+    下拉内「全部已读」（recent 行就地落已读态，不与计数矛盾）；挂全局层顶栏
+    （退出左侧）与项目壳顶栏（项目切换器左侧）各一枚；
+  - `NotificationsPage.tsx`（全局层路由 `/notifications`，GlobalApp 第四页）：分页
+    列表 + 全部/未读 segmented 筛选（手写 `.segmented`，与执行器面板同形态）+
+    行点击即读 + 深链 + 页头「全部已读」；
+  - 样式（`design-system.css` 新增 P9-1 段）：badge 走 accent（交互元素），
+    未读点中性 accent 小圆点（通知不是执行结果，不占 pass/fail 语义色），
+    已读行整行降 `--ink-2`（降级不是标记）；i18n 双语 `notifications.*` 命名空间。
+- **验证**：前后端 `pnpm check` 通过；服务重启（迁移 057 应用）与门槛 7 的实测
+  （成员加入后 ≤60s 小红点 + 弹窗 + 深链落点）按 AGENTS.md 留给用户。
+
+#### 13.4.2 P9-2 实现状态（2026-09-11）
+
+- **adapter 契约 + 注册表（`lib/assistant/`，形制照 `lib/adapters`）**：
+  - `types.ts`：归一事件 `token(text)` / `tool(name, status)` / `done(fullText)` /
+    `error(message)`（边界 1）——**done/error 是终态**，streamMessage 产出的流必须
+    以二者之一收尾（上游断流无终态时由 adapter 合成；客户端断开不合成——没人听
+    的事件没有意义）。能力面 `{stop, history, attachments}` 是 type 预设（provider
+    行可收窄）；契约里 stop 可选、建会话 / 流式 / 历史必备（资格线，边界 13）。
+    `streamMessage` **两段式**：上游响应头到达且 OK 才 resolve——那之前抛错让路由
+    在 hijack 前回干净 JSON，之后只以 SSE error 终态帧送出（门槛 5 的通道）。
+  - `index.ts`：注册表（loader 表 + memoize + `assertType` 键自检 + 同步
+    `isSupportedAssistantType`——P9-3 的 CRUD 用它答「type 是不是真的」）；v1 仅
+    `nuwax` 一项。
+  - `sse.ts`：增量 SSE 解析器（跨 chunk 半行缓冲、多行 data 按 spec 连接、注释行
+    丢弃）——Node 没有内建 SSE 客户端（EventSource 是浏览器 API）。
+  - `providers.ts`：provider 行 → 运行时（`api_key_encrypted` 是 base64 文本——
+    列是 TEXT，与 notification_channels 的 BYTEA 形态不同，P9-3 写入侧用
+    `encryptSecret(...).toString("base64")`；AES-GCM 解密只在调上游这一瞬间存
+    在，不进日志不回响应）。`loadEnabledDefaultProvider` 按 `is_default AND
+    enabled`（默认行被停用即视为无默认）；解密失败按 provider 不可用抛清楚，
+    不静默降级成无 Key——那只会得到一个更难排查的上游 401。
+  - `nuwax.ts`：建会话（`conversation/add`，`data` 即 conversationId，Long 落库
+    统一 TEXT）/ 流式（`MESSAGE`→token（`think` 不在归一契约里，丢弃）、
+    `PROCESSING`→tool（名称缺省退 `data.type`）、`FINAL_RESULT`→done（
+    `outputText` 空时退 token 累计值）、`ERROR`→error、**`HEART_BEAT` 吸收不转
+    发**）/ stop / 历史（上游「会话列表」接口刻意不用——抽屉列表读映射表，边界
+    2/修订 4）。一问一答接口 15s 超时 + `code === "0000"` 业务码判定（HTTP 200
+    但业务码非 0000 是其常态错误形状）；未知 eventType / 解析失败按协议噪音丢弃
+    ——上游加事件类型时旧前端不掉线。
+- **五条路由（`routes/assistant.ts`）**：
+  - 闸门顺序：`requireProjectAccess`（POST 一律 write——viewer 能读列表/历史，
+    不能建会话/发消息/停止）→ `assistant_enabled`（false 整组 `callNotFound`，
+    与未知路由逐字节同形，照 /mcp 的 mcp_enabled 同款，门槛 1）→ **无启用的默认
+    provider**（503 + 新错误码 **2005**「未配置」，组级检查给前端圆钮统一信号，
+    边界 15）→ 会话按 `(id, project, user)` 取（他人的 id 404 不泄露存在性）→
+    会话**自己的** provider（按 `provider_id` 取 adapter，门槛 13；被停用
+    503/2005）→ 注册表查 adapter。
+  - 新错误码 **2006**（502）= 上游调用失败——与 2005 分开是照 failNoRunner/2004
+    的取舍（「找管理员配 provider」与「agent 平台挂了」是两个处置动作）。
+  - `POST …/message`：body `{message, attachments?}`（消息 ≤32768 字符；附件
+    ≤10 且需能力面开 attachments，fileUrl 限 http(s)）；两段式 + hijack（CORS
+    头手动搬、`X-Accel-Buffering: no`，写法照 routes/stream.ts）；**断开检测挂
+    `reply.raw`**（POST 的请求体进 handler 前就被 Fastify 消费完，`request.raw`
+    的 close 信号不可靠）+ AbortController 同砍上游 fetch 与读循环；**15s 注释
+    行保活**（上游 HEART_BEAT 已被 adapter 吸收，边界 1 的 15s 口径）；终态帧后
+    停止消费；`last_active_at` fire-and-forget bump。
+  - `GET …/conversations` 读映射表不调上游；`POST …/conversations` 按默认
+    provider 建会话落映射行；`POST …/stop` 行能力面 + adapter 实现双判定，无则
+    400（13.2 的口径）；`GET …/messages` 历史代理——index/limit 透传（limit
+    1–100 默认 50）+ `Cache-Control: private, max-age=60`。
+  - `AssistantConversation` + `mapAssistantConversation` 进 `models/types.ts`
+    （snake→camel 边界纪律）。
+- **联调姿势**：已收进 e2e 的幂等种子脚本——`apitest-e2e-python` 里
+  `source env.local.sh && python3 setup/seed_assistant.py`（借 server 的
+  crypto.ts 产密文 → upsert provider → find-or-create 项目并开开关；细节见
+  下条 stg 联调实测与脚本头注释）。
+- **stg 联调实测（2026-09-11，用户提供的真实平台 + ak- Key；同日二轮：接口文档
+  更新 + agentId 更正为 26，正常流式已验证）**：
+  - **通（agentId=26，Key 绑定的智能体）**：建会话 / 会话列表 / `stop` /
+    历史 / **发消息 SSE 正常流式——224 个 MESSAGE token 逐段 + FINAL_RESULT
+    success=true（totalTokens 3930）**；经代理全链路同样通过（token×N + done
+    终态），e2e 8/8。SSE 帧是 `data:{...}`（冒号后**无空格**）——解析器按
+    spec 的可选空格处理，天然兼容。
+  - **两处协议实况（更新后的文档已正式确认，adapter 方向对齐）**：
+    ① `conversationId` 必须 **body + 路径都传**（只放路径回 `4000`）；② 错误
+    判定以 `FINAL_RESULT` + `data.success=false` 为准、平台**不发** ERROR 事件
+    ——adapter 的 `success:false` → error 终态映射正中口径。
+  - **初轮「额度不足」假象的根因**：agentId 绑错（用了 1，Key 绑定 26）——
+    平台对未绑定 id 也建会话、路由到无额度配置的模型，报
+    `quota_not_enough`。更正后无需充值。`modelId` 按文档口径第三方不传
+    （数字无效、字符串 400，模型在平台后台配）。平台自己的前端通道
+    `/api/agent/conversation/chat` 走浏览器会话，ak- Key 打它 500、cookie
+    重放 4010（预期内）。
+  - **HEART_BEAT / PROCESSING 未观察到**（正常回复 ~3s 即终；当前智能体纯问答
+    无工具调用）——HEART_BEAT 不依赖（代理自发 15s 保活）；PROCESSING 待
+    「会触发工具调用的智能体」后复核（正是 MCP 工具面接线的前置观察）。
+  - **e2e 落地（apitest-e2e-python）**：`setup/seed_assistant.py`（P9-3 的
+    CRUD/开关落地后退休；agentId 默认 26）+ `test_case/assistant/` 八用例——
+    五条路由 × 协议不变量（终态唯一且在最后、done 带 fullText / error 带可读
+    message、闸门 404、空消息 400、未知会话 404、历史含刚发消息）。**8/8
+    通过、全套 33 passed 零回归**（2026-09-11 二轮，正常流式路径；一轮跑的
+    是 error 路径——两条终态通道都实测过）。测试侧 SSE 消费按空行切事件
+    自攒缓冲（`iter_lines` 会把长事件 JSON 拦腰截断）。
+  - **对接材料**：`智能体平台-联调问题清单.md`（仓库根）——问题明细（P0 已
+    解除、P1×3 已随文档确认收口）+ 待补信息 5–9 项（data 空格稳定性 /
+    attachments 开放性 / stop 语义 / elicitation 转述 / 按会话注入凭据）+
+    我们的调用流程与复现命令，可直接转 Nuwax 侧。
+- **验证**：`pnpm check` 通过；stg 联调（正常流式 + 错误路径两条终态）与 e2e
+  8/8 已过。仍待补（**MCP 接线整体被网络阻断后置**：平台本地部署、Nuwax 在
+  公司内网，其智能体出站打不到我们的 /mcp——部署到可达网段是硬前置，P2-8 同类
+  问题；问题清单第 10 项）：PROCESSING 事件的真实字段形状（等接线后智能体真
+  调起工具）。**13.6 两项问询已答复（2026-09-11，均「不支持」，对方附了代码
+  证据：McpExecutor/ModelInvoker 无确认环节、serverConfig 静态共用、ak-Key →
+  单一 userId）——与 13.6 的预期完全一致，proposal-first 与 read-only 工具面
+  的收口维持不变**；功能请求整理成 `智能体平台-MCP支持需求.md`（需求 A
+  elicitation 转述 / 需求 B 会话级凭据三档方案），待 Nuwax 排期——A 落地才
+  开放 delete 类工具，B 落地才把「确认应用」留在会话内。
+
+#### 13.4.3 P9-3 实现状态（2026-09-11）
+
+- **后端 `routes/assistantProviders.ts`（全部 `requireSystemAdmin`，系统级）**，九条：
+  类型目录 `GET /system/assistant/provider-types`（注册表驱动——`lib/assistant/index.ts`
+  新增 `listAssistantTypes()`，第二个 adapter 落地即自动出现）/ 列表（Key 只回
+  「已配置」；会话计数用**标量子查询**随行带出——删除确认的影响面读数，不另开
+  usage 路由）/ 创建（type 必须在注册表内；能力面建行时照抄 type 预设）/ PATCH
+  （**Key 三态补丁**照 notification_channels：缺省不动 / null 清除 / 字符串设置；
+  type 建后不可改——400 显式拒绝，删了重建比就地改型诚实）/ DELETE（无 409/force：
+  会话映射级联是 13.1 的设计而非需要拦截的引用；影响面由列表计数在确认框说清）/
+  set-default（事务内先摘旧默认再戴新帽——「默认唯一」没有部分唯一索引，由路由保；
+  停用行也允许设默认，那正是边界 15 的姿态）/ import（apiKey 字段出现即 400——
+  明文 Key 不该在任何文件里旅行）/ export（下载件非信封，specCases 导出同款；
+  永不带 apiKey，也不带 enabled/is_default 运行态）/ test（**测试连接**：建会话 →
+  发 `ping` → 归一事件 SSE 回显，与发消息路由同一条 adapter 链路同一种两段式
+  + 15s 注释行保活 + reply.raw 断开检测；测试会话不落映射表；停用/未配 Key 的
+  草稿行允许测——指向性报错正是测试要回显的东西）。
+- **能力面收窄校验**（边界 13）：行是 type 预设的**子集**——PATCH/导入可把 true 收成
+  false、可恢复到预设上限，不能扩宽超过预设；未知 key 拒绝。重名走资源级 2003 预检
+  （lower 比对，dataSources 同款）+ 23505 兜底。
+- **审计**（`lib/audit.ts` 四动作）：assistant_provider.create / .update / .delete /
+  .set_default——detail 只带 name/type 与变更摘要（Key 只记 set/cleared，明文绝不进）；
+  导入复用 create 动作带 `imported: true`。
+- **`assistant_enabled` 闸门收口**：`GET/PUT /projects/:id/settings` 挂上
+  assistantEnabled（无行 = false + PUT COALESCE 保留，mcpEnabled 同款三处纪律）。
+- **前端 provider 面板**（`AssistantProvidersPanel.tsx`，系统管理第五个 tab「助手
+  provider」，排在 Runner 之后——同是「平台依赖的外部系统」）：类型选择（注册表
+  驱动）+ 按 type 渲染参数表单（v1 已知 `nuwax` 两字段 baseUrl/agentId；未知类型退
+  JSON 文本域，第二个 adapter 落地前端没跟上时配置仍可读写不挡路）+ Key 三态输入
+  （留空不动 + 「清除已保存的 Key」勾选）+ 能力面复选框（预设没有的灰掉不可勾）+
+  测试连接弹窗（归一事件实时回显：» 文字增量 / ⟐ 工具调用 / ✓✗ 终态；停止只砍流
+  不关弹窗，已收到的回显还有用）+ JSON 导入弹窗（粘贴式）+ 导出（blob 落盘，文件名
+  白名单化）+ 默认切换 + 启停；**无默认 provider 引导**：面板顶部在有行却无启用默认
+  时给一行警告（系统侧落点）。
+- **前端项目侧（本批的落点决策）**：计划未给 `assistant_enabled` 指定页面归宿（13.3
+  只列了抽屉与 provider 面板，而抽屉是 P9-4）——本批新增**项目配置组「站内助手」页**
+  （`/projects/:projectId/assistant`，`AssistantPage.tsx`）：开关（canManage 同
+  McpPage 头部位置）+ 服务状态探测（`probeAssistantAvailability` 读助手路由组自己的
+  闸门语义：200=就绪 / 503+2005=未配置 / 404=未开）+ **未配置引导双读者两答案**
+  （系统管理员给「前往系统管理」直达按钮，其他管理员被告知找谁——边界 15 的项目侧
+  落点）。P9-4 抽屉落地后本页继续作为开关与状态页（抽屉是对话入口不是配置面）。
+  `projectStore` 挂 assistantEnabled（settings 回写收口成 `applySettings` 单函数）。
+- **e2e 种子退休**：`setup/seed_assistant.py` 的职责（直插 provider + SQL 开关）由
+  本批的管理面接管——联调改走系统管理页表单（或直接用 CRUD API）；stg 的 provider
+  行已存在，无需迁移。
+- **验证**：前后端 `pnpm check` 通过；服务重启与门槛 11/12（导入 JSON→补 Key→测试
+  连接、Key 全链路不可见）的实测按 AGENTS.md 留给用户。零新迁移（057 已立全部结构）。
+
+#### 13.4.4 P9-4 实现状态（2026-09-14）
+
+- **后端小改（会话行带能力面）**：`mapAssistantConversation` 挂 `providerCapabilities`
+  ——列表查询 INNER JOIN provider 带出 `capabilities AS provider_capabilities`（FK +
+  级联删保证行不悬空），创建路由在调用点补（建会话时 provider 就在手上，省一次回读）；
+  缺席一律按 false 收（`providers.ts` readCapabilities 同款纪律——宁隐藏不错显示）。
+  抽屉的停止按钮显隐（门槛 13）与历史加载判定都读它，不问系统管理面（那是仅系统
+  管理员的）。零新迁移。
+- **前端 `AssistantDock.tsx`**（挂 ProjectShell，项目级常驻入口；fixed 定位不占排版）：
+  - **圆钮**：右下角 44px；项目开关关掉或探测回「已关」（竞态）时整个不渲染（服务端
+    真不服务，不是藏前端入口）；无启用的默认 provider 时 dashed 降级态 + 点开抽屉给
+    引导（边界 15 的抽屉落点：系统管理员直达 /system，其他成员被告知找谁——与
+    AssistantPage 同一组文案）。头像 32px（圆钮）/ 96px（抽屉头）两档是 P9-6 的挂点
+    （`AssistantAvatar` 占位组件，换芯不动壳）。
+  - **420px 抽屉**：行为归 antd Drawer（焦点陷阱 / ESC / mask 点击关闭——Quiet Console
+    的 antd 边界），外观归 `design-system.css` 新增 P9-4 段（≤520px 吃满整宽）。会话
+    切换 Select 读映射表（topic 上游还没写的口子恒空，退「MM-DD HH:mm」时间标签；
+    粘性选择但重开时验真——被删会话回落最近活跃一条，不给 antd Select 喂裸 UUID）。
+  - **消息流**：**按会话分桶**（`threads[conversationId]`——切走再切回不丢内容；流式
+    回合写自己的桶，中途切走互不干扰）+ pre-wrap 纯文本（8.13 边界 19，不引渲染器；
+    `apitest-proposal` 围栏本批原样显示，预览卡 P9-5）+ 工具行 `⟐ name · status`
+    （与 provider 测试回显同一套图标语汇，门槛 3）+ 错误气泡（fail 语义色——上游报错
+    是失败不是装饰）+ 等待首 token 的呼吸点（busy 家族，在飞请求的唯一环境动画）。
+    跟随滚动带粘性：上翻历史不拽底，回到底部自动恢复。
+  - **流式**：`streamAssistantMessage`（api.ts，与测试连接共用抽出的 `consumeAssistantSse`
+    手写解析——帧按空行切、长 JSON 防拦腰截断；hijack 前的干净 JSON 错误翻译成 error
+    终态事件，调用方只认 done/error）。事件落块：token 追加进最后一个文本块（工具行
+    隔断时另起一块）、tool 独立成块、done 的 `fullText` 权威替换累计值（拼接漂移不
+    留气泡）、error 收尾落错误气泡；流断无终态帧补「连接中断」气泡（不让「正在思考」
+    悬空——adapter 契约之外的第二道兜底）。发送 Enter / Shift+Enter 换行（IME 组合态
+    防误发）；没有会话时直接输入 = 隐式建会话（chip 的「新会话」是显式入口，两条路
+    同一张映射表）。
+  - **历史回放**（边界 2 的读侧）：切会话 / 重开抽屉整桶替换（上游是权威——别处 /
+    别的设备聊过的内容在这里自愈）；正在流式的会话跳过（回放会冲掉在飞回合）；
+    能力面没开 history 标记不可用（提示行 + 保留本次打开后的本地消息），不撞 400；
+    失败给重试。
+  - **停止**：按钮跟着**在飞的回合**（`streamingId`，不是当前显示的会话——中途切走
+    也不停错地方）且按能力面显隐（门槛 13，无 stop 能力的 provider 只有发送置灰）；
+    只调上游 stop 路由不本地断流——半截回复留在气泡里比悄悄消失诚实。
+  - **快捷 chips 四枚**（边界 6，输入区上方常驻）：新会话（项目写，viewer 不渲染）；
+    设置 / 改密码 / 登出本批先导航既有页面（/system、/change-password、Modal.confirm
+    + logout）——**卡片形态（抽屉内改 preferences、受控改密表单卡）P9-5 落地**，行为
+    已有、形态后补；导航走 navGuard confirmLeave。viewer 的输入区不渲染、给只读提示
+    （「只藏入口不做禁用态」纪律，后端守卫仍是单一事实）。
+  - i18n 双语 `assistantDrawer.*`（26 键）；未配置引导复用 `assistant.*` 既有键。
+- **验证**：前后端 `pnpm check` 通过（2026-09-14 报错修复时补跑）；服务重启与实测按
+  AGENTS.md 留给用户。
+- **2026-09-14 同日修订（用户四条反馈，13.0 修订块的落地部分）**：
+  - **助手默认开启**：迁移 **058** DROP `project_settings.assistant_enabled`；
+    `routes/assistant.ts` 五处项目闸门全摘（`assistantEnabled()` 辅助函数删除）、
+    `projects.ts` settings GET/PUT 摘字段（COALESCE 参数从 $5 收回 $4）、前端
+    `AssistantPage` + 路由 + 导航项 + `projectStore.assistantEnabled` /
+    `updateAssistantEnabled` 全链路摘除，i18n 只留抽屉引导仍用的四个键
+    （stateUnconfigured / unconfiguredAdminHint / unconfiguredMemberHint /
+    goProviders）。抽屉圆钮对全体项目成员常驻，无配置步骤。
+  - **会话 topic 自动标题**：消息路由的 fire-and-forget bump 扩成
+    `topic = CASE WHEN topic = '' THEN $2 ELSE topic END`（首条消息折叠空白、
+    30 字符 + 省略号）；抽屉在首条消息的流结束后拉一次列表换掉时间戳标签。
+    e2e 新增「首条消息自动生成会话标题」用例（轮询等 fire-and-forget 落地），
+    删除「闸门 404」用例（门槛作废），seed 脚本不再碰 project_settings。
+  - 用户级凭据与上游通用化当天在 **P9-4b** 落地（用户第二轮反馈：「设置该是用户
+    视角、上游要通用模式」），见 13.4.5。
+
+#### 13.4.5 P9-4b 实现状态（2026-09-14，用户第二轮反馈：用户视角的设置 + 通用上游）
+
+- **模型**：provider 行 = **通用协议模板**（`protocol` JSONB：4 接口 + SSE 事件映射
+  + 认证模板 + 业务码判定；`user_params` JSONB：用户参数模式）；凭据 = **用户级**
+  （`assistant_user_agents`：params 明文 + secrets 密文，(user, provider) 唯一）。
+  系统共享 Key 彻底作废（不留兜底）。迁移 **059**：新表 + provider 列改造，存量
+  nuwax 行原地翻译成标准协议配置（baseUrl 从原 config 继承）；P11 顺延 060。
+- **引擎**（`lib/assistant/engine.ts`，取代 nuwax adapter + 注册表）：模板渲染
+  （`{{user.x}}` / `{{conversationId}}` / `{{message}}` / `{{index}}` / `{{limit}}`；
+  值整体是占位符且渲染为数字时按数字进 JSON——Nuwax Long 型 id 兼容）+ 点路径取值
+  + SSE 映射翻译（token/tool/done/error + ignore 列表；done 带 success 标记且为
+  false 时按错误终态）+ 两段式流（响应头 OK 才 resolve，此前抛错让路由回干净
+  JSON）。终态纪律与原 adapter 同款。
+- **路由**：
+  - `routes/assistant.ts`——闸门语义变为「用户没配默认 agent」→ 503/2005（抽屉
+    引导进设置卡）；会话收发按「会话行 provider_id × 该用户在此 provider 上的
+    agent」解析（换默认后旧会话照常）；能力面从协议形状派生（stop/history 端点
+    有定义 = 有能力）。
+  - `routes/assistantProviders.ts`——CRUD 换 protocol + userParams（浅校验：baseUrl
+    http(s)、必备端点、SSE 事件字段；深对错归测试连接）；测试连接 body 带临时
+    参数（不落库）；导入/导出 {name, protocol, userParams}；类型目录路由删除。
+  - `routes/assistantUser.ts`（新，`currentUser` 守卫）——上游目录 / 我的 agent
+    （secret 只回键名）/ PUT（params 整份替换 + secrets 三态补丁，必填按
+    params ∪ 保留 secrets 验，第一个 agent 自动戴默认帽）/ set-default / test
+    （用已存参数走真链路，回 JSON 摘要）。
+- **前端**：
+  - 系统管理 provider 面板：**页内引导式编辑器**（2026-09-14 第三轮反馈——弹窗表单
+    既看不全也没法对照，且字段不自明）：列表 ↔ 编辑 ↔ 测试三个页内视图（零弹窗，
+    仅 JSON 导入保留小弹窗）；编辑器按**调用链顺序**分六步——基础连接（含模板变量
+    总说明：引擎内置 {{message}}/{{conversationId}}/{{index}}/{{limit}} vs
+    {{user.键名}}）→ ① 建会话（前置）→ ② 发消息（核心，含 SSE 事件映射）→
+    ③ 停止（后置·可选）→ ④ 历史（后置·可选）→ 用户参数；每步带前置/后置说明，
+    每个字段带「值从哪来、填错了会怎样」的一行 hint；必备项缺失时保存跳到对应
+    步骤；测试视图先收临时参数（不落库）再回显归一事件；
+  - 抽屉「设置」chip → **我的 agent 配置卡**（抽屉内视图切换，不跳系统管理）：
+    选上游 → 按参数模式渲染表单（secret 三态：留空保持 / 填值覆盖 / 勾选清除）
+    → 保存 / 设为默认 / 测试（结果内联回显）；保存后重探闸门；
+  - 未配置引导两味：平台无上游 → 找系统管理员；有上游没配 → 「配置我的 agent」
+    按钮直接进设置卡。
+- **e2e**：seed 直插通用协议 provider 行 + 经 API 为种子管理员配用户 agent（不再
+  借 server 的 crypto.ts 本地加密）；用例断言不变（协议不变量天然与引擎解耦）。
+- **验证**：前后端 `pnpm check` 通过；服务重启与实测按 AGENTS.md 留给用户。
+  手工验收链路：系统管理建 provider（或用存量翻译行）→ 抽屉圆钮 → 设置卡配
+  agentId/apiKey → 测试 → 保存（自动默认）→ 对话流式 → 切换上游再配一份 →
+  换默认后旧会话仍可收发。
+- **挂账**：mcpToken 已存不用（等 13.6 L3 的 MCP 身份绑定消费）；配置卡的完整
+  形态（个人信息页 agent 凭据 tab）在 P12。
+
+#### 13.4.6 P9-4c 实现状态（2026-09-15，用户确认范围：聊天 Markdown + 页面上下文）
+
+- **后端（`lib/assistant/context.ts` 新文件 + `routes/assistant.ts` 两处）**：
+  - `normalizePageContext`：顶层键白名单（page/route/entities/focus/filters/
+    selection）+ 值浅校验（标量、单值 256 字符、selection ≤50 条）；坏形状整体
+    降级为不注入（宁缺毋滥，不配 400）。尺寸预算 2048 字符：超标先丢 selection
+    再丢 filters，仍超则不注入。
+  - `composeForwardedMessage`：紧凑 JSON 封 ` ```apitest-page-context ` 围栏、
+    前缀拼进转发 message——**协议配置零改动**（`{{message}}` 渲染拼好的全文）；
+    topic 生成仍用原文（fire-and-forget 读 body.message，不受拼接影响）。
+  - 历史代理：`stripContextPrefix` 剥掉每行开头的围栏——气泡永远只显示用户打的
+    字（live 气泡本来就没有前缀，这里管上游回放；本批之前的旧消息无围栏，no-op）。
+- **前端采集（`stores/pageContextStore.ts` + `hooks/usePageContext.ts` 新文件）**：
+  - store 持 `PageContext`（page/entities/focus/filters/selection——只放标识符与
+    面包屑，**secret 值绝不进**）；hook 内容序列化后才进 effect 依赖（组件每轮
+    渲染都是新对象，拿引用当依赖会把 store 刷成高频写），挂载写入、卸载清空。
+  - **route 不由页面填**：抽屉发送时从 `useLocation` 合成（单一事实源）；未注册
+    页面也带 route——路径里的实体 id 仍在。
+  - **13 处页面注册**（URL 是底座，注册只补不在 URL 里的组件态）：EndpointWorkspace
+    （activeCase + sideTab + 最近执行）、EndpointList（勾选集）、FlowWorkspace
+    （打开的节点，树查找含循环框内）、SuiteWorkspace（最近报告）、ExecutionRecords
+    （筛选 + 抽屉中的执行）、SuiteReportPage（报告名/套件名——分享页不注册）、
+    CiTaskEditor（任务名）、PipelineRunPage（任务语境 + 当前 tab）、RepoCaseTree
+    （抽屉目标 + case_key 勾选）、IngestUnmatched（登记中的路径）、Environments
+    （抽屉编辑中的环境）、SpecCases（editing + 勾选）、Alerts（编辑中的规则）。
+    C 类弱实体页（趋势/成员/MCP/Mock/数据源/测试计划等）不注册，route 自带 id。
+- **前端透明与注入（`AssistantDock.tsx`）**：输入区上方上下文 chip——MapPin +
+    「上下文」+ mono 面包屑摘要（method+url 优先，实体名/焦点次之），点开看全量
+    JSON，「本条不带」一次性开关（发送后复位，is-off 划线不消失）；发送时
+    `sentContext` 随 body.context 上送。viewer 不能发送，chip 不渲染。
+- **Markdown 渲染（`AssistantMarkdown.tsx` 新组件 + `design-system.css` P9-4 段）**：
+  `react-markdown` + `remark-gfm`（仅此两个新依赖）；默认不吃原始 HTML（XSS 面
+  为零）、链接强制外开、不引语法高亮。只渲染 assistant 文本块；用户气泡/错误
+  气泡/工具行维持纯文本；`.assistant-md` 收回容器的 pre-wrap（markdown 自己管
+  换行），代码块/表格用既有 token（raised 底、mono、横向滚动、限高）。流式期间
+  半张表格容忍渲染。`apitest-proposal` 围栏按代码块渲染，P9-5 预览卡扫描不受
+  影响。**8.13 边界 19 的聊天场景改写就此记档**（报告页维持原边界）。
+- **i18n**：`assistantDrawer.context / contextOff / contextSkipped` 双语三键。
+- **2026-09-15 同日反馈（抽屉太小）**：420px 固定宽改**默认占视口 70%**（封顶
+  1440——大屏聊天正文行宽不无限拉长）+ **左缘拖拽条**可调 420–1600（pointer
+  capture，拖过即存 `localStorage.apitest.assistantWidth`，双击条清偏好回默认；
+  拖拽中掐掉 antd 宽度过渡）；设置卡收窄 640 居中（聊天要宽——表格/代码，配置
+  表单不要）；窄屏 ≤520px 吃满整宽的既有规则不变（100vw !important 压过内联宽）。
+- **2026-09-15 二次反馈（主题/语言外置）**：抽屉头右缘加主题/语言快捷切换钮
+  （图标跟当前主题三态走 Sun/SunMoon/Moon；Languages 切中英）——落库走
+  `applyPreference` 同一条路（本地指令 / 快捷钮两个入口一套持久化，不长第二
+  套）；prefs 未加载置灰。**设置卡内的「个性化」区随之删除**（用户二次确认：
+  外置后不放第二份入口）——设置卡只剩「我的 agent」，孤儿样式
+  （`.assistant-prefs*` / `.assistant-settings-divider`）与 i18n 键
+  （`preferences` / `prefsHint`）一并清理。外置首版有缺陷（prefs 取数效应还
+  挂在已删分区的 `view === "settings"` 条件上，直接进对话视图时快捷钮永远
+  置灰）——同日实测抓到即修，记 `issue_fix/问题记录-助手头部快捷钮不可点.md`。
+- **验证**：按 AGENTS.md 留给用户——前后端 `pnpm check`、服务重启与手工链路
+  （接口工作台说「改一下当前接口的断言」→ 上游收到的 message 前缀带
+  endpointId/caseId 围栏；历史回放不见围栏；回复含表格/代码块的排版；「本条
+  不带」开关后上游收不到围栏）。
+
+#### 13.4.7 P9-5 实现状态（2026-09-15，本地指令表 + 账号指令卡 + 拦截 + proposal 预览卡）
+
+- **零后端改动、零迁移**：proposal 应用走既有 REST（`GET/PATCH cases`）+ 本人
+  JWT，账号操作走既有 `POST /auth/change-password` / `PUT /system/preferences`——
+  proposal-first（边界 3）与「零新增写库路径」按原案兑现。
+- **本地指令表**（`lib/assistantCommands.ts` 新文件，纯函数）：`/主题` `/语言`
+  `/打开` `/项目` `/设置` `/改密码` `/登出` `/帮助` 八条，中英双语名，**前缀
+  匹配**（`/主` 命中 `/主题`；`/p` 同时是 project/password 前缀 → 歧义回执列
+  候选，不猜）；`/打开` 目标页 = 项目层 14 页 + 全局 4 页，别名双语（精确 →
+  前缀两级匹配，多命中交回候选）；`/` 单字符视为 `/帮助`（新用户的第一个 `/`
+  应该看到指令表）。未命中的 `/` 开头输入按自然语言直发上游（回车直发兜底）。
+  执行归 AssistantDock（指令表是数据，副作用归调用方）。
+- **主题桥**（`theme.ts`）：`requestThemePreference(value)` 派发自定义事件，
+  `useMode()` 监听后走自己的 `setPreference`——单一持有者不动（Quiet Console
+  规则），事件只是又一个输入源；服务端偏好同步落 `PUT /system/preferences`
+  （与系统管理页同一份，两边互改互见）。
+- **账号指令卡的卡片形态**（P9-4 悬置项兑现）：改密 chip / `/改密码` → 抽屉内
+  **受控表单卡**（当前密码 + 新密码 ×2 → 既有改密接口，`renewSession` 续命，
+  pwd_epoch / 审计语义与页面改密一致；不再跳 `/change-password` 页）；`/设置` →
+  设置卡顶部新增**个性化分区**（主题 / 语言两枚 Select 直接改写 preferences，
+  分隔线下仍是 P9-4b 的我的 agent 配置）；`/登出` 维持确认卡（Modal.confirm +
+  前端清 token，零新路由）。
+- **敏感意图拦截**（边界 6/14）：非指令消息含账号词（密码 / 口令 / password /
+  登出 / 注销 / logout / sign out 等）即本地拦截、**不转发上游**——三档：明确
+  改密意图（动宾正则，中英）→ 拦截 + 自动开改密卡；明确登出意图 → 拦截 + 弹
+  确认卡；仅含账号词 → 拦截 + 指引回执（提示改措辞可继续与 AI 聊其他内容）。
+  被拦截的用户气泡只在本地显示（上游历史里永远没有这条，回放后消失 = 「没
+  发过」的如实呈现）。
+- **系统气泡**：`ChatEntry` 增 `system` 角色（dashed 边 + 降一档墨色，与用户/
+  助手气泡拉开）承载指令回执 / 拦截提示 / 改密完成；只活在显示态，不建会话、
+  不碰上游。无会话时落 `__local__` 本地桶（指令在没建会话时也要有地方回话）。
+  `applyEvent` 改为「找最后一个 streaming 的助手条目」落块——流式中跑本地指令
+  不再打断 token 落块（门槛 5 的加强：本地通道连流式中都可用）。
+- **proposal 预览卡**（`AssistantProposalCard.tsx` 新组件 + `splitProposalSegments`）：
+  assistant 文本块按**完整** `apitest-proposal` 围栏切段——围栏外仍是 markdown
+  （P9-4c-2 渲染器不动），围栏内解析成卡；未闭合围栏（流式到一半）按代码块
+  渲染，token 到齐自然收敛成卡；坏 JSON / 未知 kind 不成卡、按代码块如实显示
+  （13.6 第一版只 `response_script` 一种 kind，枚举外不应用——前向兼容）。
+  卡片：kind 标签 + 目标用例名（`api.case` 实时拉取，缺失时如实报「不存在或
+  已删除」且不可应用）+ 草稿正文（mono 限高滚动）+ 差异摘要（现有 N 枚 /
+  应用后追加为第 N+1 枚）+ 确认应用 / 放弃。**应用 = 重读用例最新
+  responseScripts → 追加一枚启用的新脚本（`name` 取草稿缺省 assistant-draft）
+  → 整份 PATCH**——追加而非替换（非破坏：既有脚本原样保留，接口工作台还能
+  删）；重读避免把别处刚保存的脚本冲掉。终态（applied/dismissed）按草稿内容
+  键（caseId+script 短哈希）存 dock 级 Map，流式重渲染不丢；历史回放换桶后
+  自然复位。viewer 卡片只读不给按钮（「只藏入口不做禁用态」纪律，后端守卫
+  仍是单一事实）。
+- **i18n**：`assistantCmd.*`（24 键：帮助列表 / 歧义 / 用法 / 回执 / 三档拦截
+  文案）+ `assistantPassword.*`（3 键）+ `assistantProposal.*`（11 键）+
+  设置卡 2 键 + 空态指令提示 1 键，双语；指令回执用 `i18n.t` 而非渲染闭包的
+  `t`——`/语言 en` 切换后回执要用新语言写。
+- **验证**：按 AGENTS.md 留给用户——`cd apitest-web && pnpm check`、服务重启与
+  手工链路（`/帮助` 列表 → `/主题 深色` 全局换肤 → `/打开 接口管理` 跳页 →
+  输入「帮我改密码」被拦截并开卡 → 改密后本会话续命；让 agent 产出
+  `apitest-proposal` 围栏草稿 → 卡片确认应用 → 用例 responseScripts 追加一枚、
+  审计 created_by 是本人；viewer 打开同一会话卡片只读）。
+
+##### 13.4.7.1 MRTR 删除确认表单卡（2026-09-15 增补，验收驱动）
+
+用户实测「让 agent 删环境」暴露：/mcp 的 MRTR 闸门与上游转述都正常，但确认请求
+（Nuwax 以 `MESSAGE + data.type=ELICITATION + elicitationSchema` 混进聊天流）被
+引擎 token 映射当普通文字吞掉——表单结构整个丢弃，抽屉里没有任何确认入口。缺陷
+细节与上游 resume 通道（`/api/v1/chat/resume-elicitation`）对 API-Key 会话稳定
+5000 的复现证据见 `issue_fix/问题记录-助手MRTR删除确认被当文字吞掉.md`。落地：
+
+- 协议映射新增 `sse.elicit`（与 token 同 kind、判别字段分流）与 `sse.tool.input`
+  （确认卡拿删除目标），迁移 060 给 Nuwax 方言协议补齐；归一事件新增
+  `{type:"elicit", text, tool, input, schema}`（后端 `lib/assistant`，前端同形）。
+- 前端 `AssistantElicitationCard`：MRTR 确认请求渲染成**表单**——文案 + 后果 +
+  「确认删除 / 放弃」；确认动作走**本人 JWT 的既有 REST**（`GET usage` 两段式，
+  与环境页同款删除语义），v1 工具枚举只 `delete_environment`，未知工具只读引导。
+- provider 编辑面板 `buildInput` 以原协议为底保留表单未管理的键——管理员改配置
+  不再把 elicit / tool.input 悄悄剥掉。
+- 上游第三方 resume 通道修复后，确认动作可切回 MCP 往返（枚举映射的形状已留好）。
+- **两轮后补（同日用户实测）**：① 确认记录平台侧持久化——`elicit_log` jsonb
+  （迁移 061）+ `POST …/conversations/:id/elicit` 记录接口 + 历史代理按时间戳并回
+  system 行（前端 i18n 渲染），回放后确认记录仍在；② agent 回复里 Nuwax 的
+  `<markdown-custom-process>` 过程标记在 `AssistantMarkdown` 渲染层剥离（工具状态
+  我们已有工具行呈现，标记是重复噪音；只剥该已知标记不泛化清洗）。
+
+#### 13.4.8 P9-6 实现状态（2026-09-16，人物生成器）
+
+- **零迁移、后端仅类型**：preferences 是 jsonb 直通合并，`system.ts` 的
+  Preferences 类型补 `avatarSeed?: string` / `avatarNightmare?: boolean` 两个
+  可选键即全部后端改动（PUT 不逐键校验——与 theme/language 同款信任边界，
+  前端读写侧自防护：非字符串/空白种子按无覆盖处理）。
+- **`lib/avatar.ts`（新文件，纯函数）**：移植 `hand-drawn-character-creator.html`
+  76–584 行——seeded random（hashSeed + mulberry32）、铅笔笔刷（多遍抖动折线 /
+  椭圆 / blob 填充 / 排线）、调色板、物种表、五官绘制（眼/嘴/鼻/发/耳/头/躯干/
+  手臂/腿/地面）照搬；three.js 部分（588 行起）不搬——部件不再各自成纹理贴 3D
+  平面，而是按原版世界坐标与 z 序（地面 < 腿 < 躯干 < 手臂 < 头 < 耳 < 眼 <
+  鼻 < 嘴 < 发）以缩放变换直接落笔到单张 2D canvas，笔画按最终分辨率光栅化
+  （不经过纹理降采样，小尺寸反而更清晰）。
+- **取景两档**：`framing: "bust"`（半身：头+耳+发+肩口）给顶栏入口 30px（改位
+  前是 32px 圆钮）——全身在这个尺寸只剩斑点；`"full"`（全身站姿+地面线）给
+  抽屉头 96px。头像自带奶油纸底不随主题：深墨线在深色页底上会消失，纸底让
+  两种模式都成立（贴纸观感有意为之）。
+- **确定性**：五官滚动一条 rng 流（同种子同人物）；描边抖动按部件独立成流
+  （`seed:part`，原版共享一条流——增删部件会整张脸重新洗牌），眼睛例外——每次
+  眨眼换流（`seed:eyes:N`，boiling line）。小尺寸给笔画设 ≥1.1 设备像素下限
+  （32px 档 w=5 铅笔线自然渲染只剩 ~1 设备像素，等于发丝）。
+- **`components/Avatar.tsx`（React 封装）**：canvas（dpr 封顶 2）+ 眨眼时钟
+  （1.6–6.2s 睁 → 110–180ms 闭）。**眨眼是唯一动画**（边界 5：原版的转头/
+  跳跃/庆祝/表情切换不搬），`animate` 由调用方控制，`prefers-reduced-motion`
+  永远静止，`animate` 关闭立即停在睁眼帧。
+- **挂点换芯**（AssistantDock）：入口 30px 半身（2026-09-16 第二轮反馈后位于
+ **顶栏原铃铛位**，portal 进两壳 topbar 的槽位）/ 抽屉头 96px full
+  （`animate={open && !streaming}`——眨眼只在抽屉打开且无在飞请求时运行，
+  Quiet Console 单环境动画约束，与在飞呼吸点不同时出现）；「换一个形象」=
+  抽屉头快捷钮（Dices，与主题/语言同一排）写一个新 `preferences.avatarSeed`
+  （randomUUID），两档同步换。种子解析：avatarSeed（非空字符串才算）>
+  `users.id` > 兜底。preferences 取数维持「抽屉打开时拉一次」的既有决策
+  （不为头像把请求提前到 mount）——首次打开前入口用 users.id 兜底画像。
+- **nightmare 默认移出**（边界 5）：滚动概率 0（`avatarNightmare === true` 时
+  恢复 12%），物种代码与暗色调色板全保留；开关藏在 preferences 无界面入口，
+  后续要暴露就是一行 SettingRow 的事。
+- **i18n**：`assistantDrawer.rerollAvatar`（换一个形象 / New look）1 键。
+- **验证**：按 AGENTS.md 留给用户——`cd apitest-web && pnpm check`，服务重启与
+  手工链路（同一账号重登头像不变、两个账号头像不同 → 抽屉头 96px 全身像偶尔
+  眨眼、发消息时眨眼停 → 点「换一个形象」两档同时换 → 深色模式下
+  头像仍是纸底贴纸 → reduced-motion 下不眨眼）。
+
+#### 13.4.9 2026-09-16 增补（用户反馈驱动）：人物反应 + 通知入口移入助手 + 对话用户级化
+
+四轮用户定位修订，同日落齐（`pnpm check` 前后端双过；迁移 062 待 `./start.sh`
+应用——会话表去 project_id 后新 INSERT 才能落行，存量会话行随列删除一并清理）：
+
+- **人物反应**（13.4.8「动画只留眨眼」按用户要求放宽为「眨眼 + 状态反应」）：
+  `lib/avatar.ts` 增 `gaze`（瞳孔视线）/ `pose`（cheer 举手，drawArmUp 随本轮补
+  移植）/ `jump`（跳跃弧线）/ `mouth`（表情覆盖，不在物种嘴型池的值忽略——猫
+  不张嘴、nightmare 不微笑）；`Avatar` 增 `mood`（持续基线：流式中 = thinking
+  「想」的视线）与 `pulse`（一次性反应，nonce 触发）。反应是**同一张脸上的
+  表演**——不动物种与配色；全部是状态变化驱动的离散动画（greet 开抽屉 / sent
+  发消息低头看 / done 欢呼跳 / error 抿嘴委屈 / bounce 入口小跳），眨眼仍是
+  唯一的 idle 循环且只在 idle 心情跑。reduced-motion：眨眼与跳跃停、表情保留
+  （表情是状态不是动效）。
+- **通知入口移入助手 + 助手入口改位顶栏**（13.0 边界 10 修订；同日第二轮用户
+  反馈：助手不放右下角，放原铃铛位）：**顶栏铃铛撤掉，助手入口头像按钮 portal
+  进两个壳 topbar-actions 的 `#assistant-topbar-slot`**（壳互斥渲染、槽位唯一；
+  组件本体仍在 DockedShell 单挂载——切壳不断流；`.assistant-entry` 34px 圆面
+  装 30px 半身头像，空槽 `:empty` 不占宽）。通知常驻入口 = 顶栏助手钮的未读
+  徽标（99+ 封顶）+ 抽屉头 Bell 钮（未读小圆点，active 态）+ 抽屉「最近通知」
+  视图（最近 10 条，行样式复用 bell-item 家族；点行 = 标已读 + 深链
+  confirmLeave、全部已读就地清、「查看全部」进 /notifications 整页——整页与
+  antd 弹窗、Root 轮询照旧）。BellMenu 组件删除；新通知到达（未读数上升，非
+  首轮存量）入口按钮小跳一下。
+- **对话用户级化**（会话是「人」的，不挂项目——2026-09-16 用户定位修订）：
+  迁移 062 删 `assistant_conversations.project_id`；路由组搬出项目段
+  `/api/v1/assistant/conversations*`（currentUser 守卫，登录即用，viewer 只读
+  概念随项目闸门一并消失）；前端挂点从 ProjectShell 上移 main.tsx 的
+  DockedShell（PasswordGate 内层——全局页与项目页同一份会话，切页面/切项目
+  对话照旧、在飞流不断）。项目上下文按消息随发随带（P9-4c 围栏不变，全局页
+  无 pageContext 时上下文 chip 不渲染）；项目资产卡（proposal / MRTR 确认）
+  在无项目上下文时降级只读（`projectId` 可空 + outsideProject 文案，写资格 =
+  在项目内 && 项目写角色）；`/打开` 项目页目标在全局页给回执、候选列表只报
+  全局页。e2e assistant 模块同步去项目 fixture。
+- **i18n**：`assistantCmd.openNeedsProject` / `projectNone`、
+  `assistantProposal.outsideProject`、`assistantElicit.outsideProject` 4 组新键；
+  `assistantDrawer.readonlyHint`（viewer 只读提示）随概念删除。
+- **验证**：按 AGENTS.md 留给用户——迁移 062 + `./start.sh --restart api worker`
+  后手工链路（看板页顶栏头像按钮开助手能聊、进项目聊的是同一份会话列表 →
+  发消息头像低头看、流式中视线抬起、完成欢呼、错误委屈 → 开抽屉打招呼 →
+  新通知到达入口按钮跳 + 徽标 → 抽屉内看最近通知、点行深链 → 顶栏不再有
+  铃铛、原铃铛位是助手头像）。
+
+#### 13.4.10 P9-8 实现状态（2026-09-16）上游异常演练
+
+三类上游异常逐条落点（**不做脱敏**——上游自报的错误文案原样透出，那是上游说的话，
+平台不替它改写）：
+
+- **ERROR 事件（链路已有，本次只补码）**：上游 `ERROR` 事件与 `FINAL_RESULT
+  success:false` 两条路都以错误终态收尾（`engine.ts` 的 done 映射判 success），
+  文案原样、**不带码**。
+- **限流**：引擎把 HTTP 失败包装成 `AssistantUpstreamError`（带 `status` +
+  `Retry-After`；秒数与 HTTP-date 两种形态都归一，上限一小时）；`upstreamRateLimit()`
+  **只认 429**（503 带 Retry-After 不并按限流——那是「服务不可用」，告诉用户「稍后
+  重试」会把排查方向带偏）。新增错误码 **2007**（HTTP 429）+ `Retry-After` 如实
+  转发；五个上游出口（新建会话 / 发消息 / 停止 / 历史 / 我的 agent 测试）统一走
+  `failUpstream`，系统管理的测试连接对齐同一口径。前端：429 → 限流文案（错误气泡
+  与动作 toast 两处），不再贴上游英文原文。
+- **断流**：聊天腿补**静默预算** `STREAM_IDLE_TIMEOUT_MS = 60s`——此前一问一答腿有
+  `AbortSignal.timeout` 兜底，流式腿裸挂：上游连着却一个字不发就永久占用连接与
+  15s 心跳。预算测的是**两块数据的间隔**（上游心跳、token 都重置它），所以
+  「只发心跳不给结果」不超时（`heartbeat_only` 演练项即此预期）。
+- **归一事件新增可选 `code`**：`upstream_silent`（静默超预算）/ `stream_incomplete`
+  （干净收尾零事件）/ `upstream_stream_failed`（hijack 后的传输级截断，路由 catch
+  打的）/ `rate_limited`（429）。前端按码换本地化文案（`assistantDrawer.rateLimited`
+  / `upstreamSilent` / `streamIncomplete` / 复用 `streamAborted`），不带码的错误
+  原样显示上游文案；i18n 三组新键 zh/en 双份。
+- **凭据通道两缺陷**（收尾自查发现，细节留 `issue_fix/问题记录-助手凭据通道两缺陷.md`）：
+  ① PUT `my-agents` 的 `params` 通道能装 `secret: true` 项（明文 Key 落库并回显，
+  破门槛 12）→ 现 400 拒收；② 凭据解密失败冒 500 → 统一 `loadResolvedDefaultAgent`
+  降级 503/2005「去设置卡重填」。两处都是门槛 2/12 的前置。
+- **演练物料**（`apitest-e2e-python/drill/`）：`stub_upstream.py` 是零依赖假上游，
+  按迁移 059 的 Nuwax 方言实现 5 条接口 + `eventType` SSE，12 个故障模式（ok /
+  silent / stall_mid / heartbeat_only / drop / empty / error_event / fail_result /
+  ratelimit / ratelimit_create / http500 / bad_content_type）；`POST /__mode` 切
+  模式、`?mode=` 单次覆盖、按会话记忆历史。`README.md` 是逐项演练清单（「期望后端 /
+  期望界面」两列 + 门槛 2/3/5/12/14 对应项 + 凭据可见性回归步骤），准备三步只把
+  种子脚本的 `NUWAX_BASE_URL` 换成桩，**不动协议配置**。
+- **验证**：按 AGENTS.md 留给用户——本批无新迁移，`./start.sh --restart api worker`
+  后照 `drill/README.md` 逐项走。重点三项：silent 约 60s 收尾成「上游长时间没有
+  回应」、ratelimit 回 429/2007 + `Retry-After` 且气泡是「上游限流，稍后重试」、
+  drop 的半截回复 +「连接中断，回复未完成」。（本批未跑 `pnpm check`，与「类型检查
+  需用户明示」的项目口径一致。）
+
+#### 13.4.11 2026-09-16 增补（用户要求）：`/` 指令输入即识别（候选浮层）
+
+P9-5 的指令通道只在**回车发送时**解析：老手够用，新用户等于「指令不可见」——得先
+知道指令名才打得出来（空态那枚「查看本地指令」按钮是唯一入口）。本批把识别提到
+输入过程中，语义与执行路径一字未改：
+
+- **纯解析层**（`lib/assistantCommands.ts` 新增 `completeCommand`）：与 `parseCommand`
+  **共用同一套匹配谓词**（`name === token || name.startsWith(token)`）——浮层里出现的
+  候选就是回车时会命中的那几条，两边永不打架。两段式位置：**指令位**（`/`、`/主`、
+  `/th`）与**参数位**（`/主题 深`、`/打开 接`，值型参数的别名表与页面表都按已输入
+  片段过滤）。补全语言跟界面走（中文界面补 `/主题`，英文界面补 `/theme`）；**已经
+  打对的别名不改写**（打了 `/接口管理` 不会被 Tab 换成 `/接口`）。没有项目上下文时
+  `/打开` 只报全局页（与回执同口径，不推打不开的页）。
+- **浮层 UI**（`AssistantDock`）：输入框上方候选列表（形态照 `VariableField` 的
+  `.var-field-pop` 语汇：面 + 细线 + 阴影 + 选中底色，新增 `.assistant-cmd-*` 一组）；
+  候选行两列（mono 补全文本 + 说明），参数形状作为第三列提示（`深色｜浅色｜系统`）。
+  **↑↓ 选、Tab 补全、点选等价于 Tab**（mousedown 不是 click——失焦会先收浮层）；
+  指令位补全后自带尾空格、自然落到参数位，下一层候选直接出现（参数词汇靠这一步
+  可发现）；参数位补全即收浮层。`Escape` 收起、打到下一个字符重新武装。
+- **Enter 仍是发送**（13.3 回车直发兜底不动）：前缀命中的指令照 `parseCommand` 执行，
+  未命中的 `/xxx` 照旧作为消息发给 AI——浮层不抢发送键。两者不同这点写在浮层页脚
+  （`assistantCmd.paletteHint`）。
+- **i18n**：新键 15 组 ×2 语言（`cmd*` 8 条说明、`hint*` 3 条参数形状、`langValue_*`
+  2 条语言自名、`paletteTitle` / `paletteHint`）。
+- **验证**：按 AGENTS.md 留给用户——`/`（全表）、`/主`（单条 → Tab → 参数位）、
+  `/主题 深`（值候选）、`/打开 接`（页面候选）、`/p `（project/password 歧义时仍停在
+  指令位让用户挑）、`/xxx`（无候选、浮层不出现、回车直发上游）、Shift+Enter 换行后
+  不再识别。（本批未跑 `pnpm check`，同 13.4.10 口径。）
 
 ### 13.5 验收门槛
 
-1. `assistant_enabled=false` 的项目：助手路由组 404 且不泄露配置存在性。
+1. ~~`assistant_enabled=false` 的项目：助手路由组 404 且不泄露配置存在性。~~
+   （**2026-09-14 作废**：项目闸门随迁移 058 取消，助手默认开启——见 13.0 修订块。）
 2. 对话过程网络面板里**没有**上游 API Key（全链路服务端转发）。
 3. `PROCESSING` 工具行如实显示 agent 正在调用的工具名。
 4. agent 产出的草稿（如一段响应脚本）经预览卡「确认应用」后用**本人 JWT** 落库；
@@ -2154,36 +2948,117 @@ POST   /api/v1/notifications/read-all                   全部已读
 7. 成员被加入项目后 ≤60s 顶栏出现小红点与弹窗；点击通知深链到正确页面。
 8. 同名用户头像相同；改名后头像不变；「换一个形象」只影响本人。
 9. `prefers-reduced-motion` 下无眨眼动画。
-10. 主线教程 5 步全程无「目标元素找不到」的卡死（找不到自动跳步）。
+ 10. ~~主线教程 5 步全程无「目标元素找不到」的卡死（找不到自动跳步）。~~
+    （**2026-09-16 随 P9-7 移出至 P13**，见 19.0 验收门槛。）
+11. （2026-09-11 增）导入 provider JSON（补 Key + 测试连接通过）后，零代码改动
+    即可在抽屉内对话；导出 JSON 不含 apiKey；导入未知 type 报错。
+12. （2026-09-11 增）apiKey 在任何 API 响应与前端网络面板不可见（写库即密、
+    接口只回「已配置」）。
+13. （2026-09-11 增）切换默认 provider 后，旧 provider 的会话仍可打开且按原
+    provider 收发（`provider_id` 隔离）；无 stop 能力的 provider 停止按钮不出现。
+14. （2026-09-11 增）上游停机时 `/登出`、`/改密码`、`/设置` 可用；改密走
+    `POST /auth/change-password`，`pwd_epoch` / 审计语义与页面改密一致；密码不出
+    现在消息流、不发给上游。
 
-### 13.6 后置增补：项目可见性两层 + 权限申请审批流（2026-09-07 提出，记录取向不排期）
+15. （2026-09-16 增，P9-8）上游异常三类各有明确收尾：断流（连接掐断 / 静默超预算
+    / 干净收尾零事件）给出错误气泡而非悬挂；限流回 429 + 错误码 2007 并如实转发
+    `Retry-After`；上游 ERROR 事件与 `success:false` 以错误终态落地。
+    **演练物料**：`apitest-e2e-python/drill/`（stub 上游 12 个故障模式 + 逐项清单，
+    门槛 2/3/5/12/14 的对应项与凭据可见性回归步骤都在那份 README 里）。
 
-**现状锚点**：`queryProjectMetrics`（`dashboard.ts:33-38`）对非系统管理员用
-`EXISTS(user_project_roles)` 过滤——非成员在项目列表 / 数据看板 / 项目切换器**完全
-看不到**非成员项目（不是「看得到进不去」），URL 直达 `GET /projects/:id` 由
-`requireProjectAccess` 回 403。发现层的缺失正是动因：连项目存在都不知道，「找谁要
-权限」无从谈起——成员页展示管理员清单的前提是先进得了项目（P6-4 的产品理由只覆盖
-了已进项目的 viewer）。
+### 13.6 agent 方接入要求与对接契约（2026-09-11 确认）
 
-**取向（防止将来跑偏）**：
+分三层：**运行接口**（agent 平台系统必须具备）、**接入交付物**（对接时要拿到手的
+东西）、**双方约定**（需要共同定义的契约）。
 
-1. **可见性拆两层，指标不随身份外泄**：项目身份（名称 / 描述）对全部登录用户可见；
-   接口数 / 通过率等指标仍只对成员计算与下发，看板聚合的分母不含非成员项目——
-   「看得到」买到的是发现，不是数据。
-2. **无权限落地页**：非成员 URL 直达项目时不再是裸 403——身份级端点回 200（项目名 +
-   管理员线索），前端渲染「无权限 + 申请入口」落地页。这是审批流的 UX 前置，也是
-   `requireProjectAccess` 之外唯一要开的口子。
-3. **审批流复用成员管理，不开第二条写路径**：新表 `access_requests`（project /
-   user / 建议角色 / status: pending·approved·rejected / handled_by / handled_at /
-   note）；**批准 = 现有成员 upsert**（`granted_by` 落审批人，`member.upsert` 审计
-   照旧），拒绝只记状态。P6-4 成员页的人工添加与 P6-3 邀请码通道照旧——审批流是
-   用户主动的自助通道，不是唯一通道。
-4. **触达靠站内信**（排在本节的原因）：新申请 → 通知全体 project_admin；审批结果 →
-   通知申请人。没有通知中心，审批流等于管理员靠刷页面发现申请，不如不做。
-5. **幂等**：同一 (project, user) 只允许一条 pending；被拒后可再申请（第一版不限流）。
-6. **实施时再定的开口**：申请是否带建议角色（管理员可改后批准）；非成员可见的管理员
-   线索到什么粒度（email / 仅姓名）；项目切换器是否列出带锁的非成员项目（倾向不列
-   ——切换器是「进入」的入口，目录页才是「发现」的入口）。
+**一、运行接口 — 必备三项 + 可选一项**
+
+| # | 能力 | Nuwax 对照 | 为什么 |
+| --- | --- | --- | --- |
+| 1 | 创建会话 | `POST /conversation/add` → conversationId | 资格线：没有会话概念的不算 agent 平台，进不了注册表 |
+| 2 | 发消息（SSE 流式） | `POST /chat/{id}` 逐 token 事件 | 事件字段名可任意（adapter 翻译），但语义必须能区分**文字增量 / 完成 / 错误** |
+| 3 | 按会话查历史 | `GET /{id}/messages` | 平台不存 transcript（边界 2/修订 4），刷新/换设备后的消息回放全靠上游 |
+| 4 | 停止生成（可选） | `POST /{id}/stop` | 无则能力降级：前端断流，按钮隐藏 |
+
+上游的「会话列表」接口**不需要**——抽屉会话列表读自己的 `assistant_conversations`
+映射表。SSE 事件**最好还有**（没有不阻断，只影响体验）：工具执行状态（`PROCESSING`
+类——抽屉里「正在调用 list_endpoints…」进度行，信任感的关键）；心跳
+（`HEART_BEAT`；没有则代理自己发保活注释行，已设计）。
+
+**二、接入交付物 — 建一个 provider 要拿到手的东西**
+
+1. **Base URL**：我们服务端可出站访问的 API 地址。⚠️ 部署硬前置——apitest-server
+   所在网段必须能出站打通 agent 平台（P2-8 同类教训，启动前实测）。
+2. **API Key**：绑定目标智能体（Nuwax 为 `ak-xxx`，Bearer 头）；我们侧 AES-GCM
+   加密落库，接口只回「已配置」。
+3. **agentId**（或等价标识）：有些平台 Key 自动关联智能体，有些要显式传。
+
+**三、双方约定 — 唯一需要共同定义的新契约**
+
+**MCP 工具面接线**（agent 从「通用聊天」变「站内助手」的根）：
+
+- **我们给 agent 方**：`/mcp` 端点 URL（Streamable HTTP 无状态形态）+ 一枚
+  **read scope 的 MCP Token**（P5 机制，最小权限）；他们在自己后台把 `/mcp`
+  装进智能体（Nuwax 的 `STREAMABLE_HTTP` 安装方式）。
+- **agent 方的活**：智能体人设/提示词/工具编排都在他们侧配置；只用 read 工具、
+  写操作产出**草稿**。
+
+**Proposal 草稿格式**（P9-5 的核心约定，先定再对接）：agent 在回复正文中用固定
+围栏标记草稿，前端扫描渲染成预览卡，「确认应用」时用本人 JWT 调既有 REST。
+第一版只一种 kind，枚举与既有 REST 一一对应，后续按需扩：
+
+~~~markdown
+```apitest-proposal
+{"kind": "response_script", "caseId": "…", "script": "…"}
+```
+~~~
+
+**页面上下文块（P9-4c，2026-09-15）**：平台在每条用户消息前缀一个
+` ```apitest-page-context ` 围栏（紧凑 JSON：page / route / entities / focus /
+filters / selection——标识符 + 面包屑，无 secret 值）。agent 方约定：**必须优先
+按该块解析「当前/这个/刚才」类指代**（拿 ID 调 MCP read 工具取全量），块里没有的
+信息要反问用户，不许猜；用户侧展示与历史回放已由平台剥掉该块，agent 不要在回复里
+复述它的原文。
+
+**转述 elicitation / MRTR — 三层职责拆解（谁实现什么）**
+
+| 层 | 谁实现 | 现状 |
+| --- | --- | --- |
+| 两回合协议（`inputRequired` + 确认判定 + 拒绝文案） | **我们** | P5 已实现（`mcpToolResult.ts` 的 `mrtrGate`） |
+| 转述到人（确认请求变会话一问、人的回答带回第二次调用） | **agent 方** | MCP 会话是 Nuwax ↔ `/mcp` 直连，助手代理只转聊天 SSE、不在工具调用回路上——这层我们写不了 |
+| 等效替代（确认由真人完成） | **我们** | proposal 卡 / 页面引导——L3 proposal-first 的由来 |
+
+上游不支持转述时的三种典型结局（为何按「不支持」收口）：**幻觉**（「已删除 ✓」
+但库里还在）、**贴机器文**（`inputRequests` JSON 原样进气泡）、**自作主张**（LLM
+自己代答 `confirm=true`——比不支持更糟，等于 AI 替人拍板不可逆删除）。故聊天
+token 只发 read scope，delete 类工具不进 agent 工具面，被要求删除时按人设引导
+「请到页面操作」。
+
+**实测方法（排 P9-2 联调实测清单，非验收门槛）**：
+
+1. 预检（问 agent 方研发，便宜）：运行时对工具返回的 `inputRequired` /
+   elicitation 类结果怎么处理；mcp-proxy 所用库（rmcp 0.10 / rmcp-soddygo 1.5.0）
+   是否支持把 elicitation 转进会话。顺带问「按会话注入凭据」（P5-3 留的账）。
+2. 黑盒十分钟：`/mcp` 装进测试智能体 + 含 delete scope 的测试专用 token +
+   可牺牲测试套件 → 聊天下删除指令。**判定标准不是「删没删成」，而是「它问没
+   问你」**：会话内出现确认问答且按答复执行 = 支持；声称已删但库里还在 / 贴
+   JSON / 卡住 = 不支持；未问直接删（两次调用间隔极短、会话无确认文本）=
+   **危险假阳性**，按不支持处理且不可放宽。佐证：库内实际状态 + `audit_logs` /
+   MCP 动作审计 + 两次调用时间戳与会话内容对照。
+3. 两项答案都不改变设计：不支持是预期（方案已收口）；即使支持，写操作的审计
+   主体仍落 MCP token 而非真人（除非上游还能按会话注入凭据——另一个他们没有
+   的能力），proposal-first 地位不动。
+
+**明确不要求 agent 方提供**（避免对接扯皮）：按会话注入凭据（proposal-first 已
+定）、转述 elicitation / MRTR（delete 降级页面操作）、替我们存数据（transcript
+归他们，我们只存一行映射）。
+
+### 13.7 后置增补：项目可见性两层 + 权限申请审批流（2026-09-07 提出；**2026-09-16 立项为 P14**，原 13.6，2026-09-11 因新增 13.6 顺延）
+
+> **本节已转正为二十章 P14**（2026-09-16 用户确认排期）：提出时的取向六条与现状
+> 锚点**原样随迁** 20.0 并扩编为范围 / 边界 / 迁移 / 路由 / 批次 / 门槛，完整口径
+> 以二十章为准。本节保留标题与提出日期作为 2026-09-07 的取向记录入口，正文不再
+> 重复维护。
 
 ---
 
@@ -2232,7 +3107,7 @@ POST   /api/v1/notifications/read-all                   全部已读
 
 ## 十五、依赖与里程碑
 
-### 15.1 新增依赖（五个阶段合计）
+### 15.1 新增依赖（八个阶段合计）
 
 | 阶段 | 依赖 | 用途 | 备注 |
 | --- | --- | --- | --- |
@@ -2241,6 +3116,9 @@ POST   /api/v1/notifications/read-all                   全部已读
 | P8 | — | — | 零（手写 SVG 是定案） |
 | P9 | — | — | 零（Canvas 2D 人物、SSE 复用既有） |
 | P10 | — | — | 零（查询缓存复用 P1 已装的 `ioredis`；对象存储抽象已于 P4.5 落地 `lib/objectStore.ts`） |
+| P12 | — | — | 零（MCP SDK / scrypt / 既有 pg 与 antd 全复用） |
+| P13 | — | — | 零（教程手写 `lib/tour.ts` + `TourCard.tsx`，i18n 复用既有双语机制，完成态走 `preferences` JSONB） |
+| P14 | — | — | 零（可见性拆层是既有查询的改写；审批流 REST / 站内信 / 成员 upsert 全复用既有设施） |
 
 ### 15.2 里程碑（并入主计划 12.1 表）
 
@@ -2249,9 +3127,12 @@ POST   /api/v1/notifications/read-all                   全部已读
 | M8 | P6 | 注册 + 成员与角色 + 三级权限 + 审计可读 | 邀请码注册即入项目；viewer 界面无写入口；成员变更可审计 |
 | M9 | P7 | 文本用例库 + XMind/Excel 导入 + 绑定 + 测试计划 | 300 条 XMind 导入正确；自动化覆盖率可读；计划可标结果可导出 |
 | M10 | P8 | 口径收口 + 失败归因 + 全局/项目统计 + 下钻 | 四处通过率一致；归因分布与覆盖率同屏；图表 hover/下钻可用；零图表库 |
-| M11 | P9 | 站内助手 + 站内通知 + 教程 | 代理对话可用且 Key 不出服务端；proposal-first 闭环；通知小红点 + 弹窗 |
+| M11 | P9 | 站内助手 + 站内通知（教程 2026-09-16 移出至 P13 / M14） | 代理对话可用且 Key 不出服务端；proposal-first 闭环；通知小红点 + 弹窗 |
 | M7 | P10 | 性能 + 插件（原 P6 顺延） | 支持 1000+ 并发执行 |
 | M12 | P11 | 列级归属 + 资源 CRUD 全审计 | 任意核心资源可查「谁建/谁改」（列表直读 + 审计下钻两路）；系统写入显示「系统」；viewer 无审计读权 |
+| M13 | P12 | 个人中心 + 用户级 MCP Token | 一把 token 跨项目（A 写 B 读同一会话完成）；个人中心集齐改密/通知查看全部/MCP Token/agent 凭据挂点；项目侧绑定可见可踢；吊销/解绑/关闸/降权即时生效 |
+| M14 | P13 | 新手教程（自 P9-7 移出） | 主线教程 5 步全程无「目标元素找不到」的卡死（找不到自动跳步）；首登自动触发且完成态可记（`preferences.onboarding.mainDone`）；双 i18n |
+| M15 | P14 | 项目可见性两层 + 权限申请审批流（自 13.7 转正） | 非成员可见项目身份（名称/描述）但任何指标不可见，看板聚合分母不含非成员项目；URL 直达渲染「无权限」落地页而非裸 403；申请→站内信通知 project_admin→批准（走既有成员 upsert）/拒绝→结果通知申请人全程闭环；同一 (project, user) 只有一条 pending |
 
 ### 15.3 主计划与规格已同步的编辑（2026-09-04 全部完成）
 
@@ -2279,8 +3160,60 @@ POST   /api/v1/notifications/read-all                   全部已读
 - [x] 主计划新增「十五、P11 — 资产归属」指针章 + 路线图 ASCII / 头部说明 / 12.1 里程碑表同步。
 - [x] 本文件标题与头部归属、章节映射说明扩为 P6–P11。
 
+### 15.6 P12 立项并入本文件（2026-09-14 完成）
 
+- [x] 新增十八章 P12 — 个人中心 + 用户级 MCP Token（token 归人、绑定归项目、scope
+  放绑定上、工具面 projectId 参数化、read 补活体复查；全局层 /me 页集齐改密 /
+  通知查看全部 / MCP Token / agent 凭据挂点），范围、边界 12 项、迁移示意、改动面
+  摸底与分批（P12-1 后端 / P12-2 前端）全部落在本文件。
+- [x] 13.0 的 P9-4b「个人信息界面另行规划」补指针：落点 = P12 个人中心的 agent
+  凭据 tab（若 P9-4b 先行则先建最小页，P12 扩为完整个人中心）。
+- [x] 15.1 补 P12 零新增依赖行（「五个阶段合计」→「六个阶段合计」）；15.2 里程碑表
+  补 M13 行（与主计划 12.1 表一致）。
+- [x] 主计划新增「十六、P12」指针章 + 头部说明 / 路线图 ASCII / 9.0 Token 形状修订
+  指针 / 12.1 里程碑表同步。
+- [x] 本文件标题与头部归属、章节映射说明扩为 P6–P12。
 
+### 15.7 文件更名 P6-P10 → P6-P12（2026-09-14 完成）
+
+- [x] `DEVELOPMENT_PLAN_P6-P10.md` → `DEVELOPMENT_PLAN_P6-P12.md`（随 P12 立项，
+  覆盖范围扩为六个阶段；同 15.4 的 P6-P9 → P6-P10 更名先例）。
+- [x] 全仓活指针同步：主计划 12 处（头部说明 / 十四~十六章指针章 / 里程碑表）、
+  `API_AUTOMATION_SPEC.md` 路线表 2 处、`issue_fix/` 索引与记录 6 处。
+- [x] 15.4 历史记录中的旧文件名（P6-P9 → P6-P10 那一行）保留原文不改——它记录的是
+  2026-09-05 那次更名的事实。
+
+### 15.8 P13 立项并入本文件（2026-09-16 完成）
+
+- [x] 新增十九章 P13 — 新手教程（P9-7「教程骨架 + 主线 5 步 + 双 i18n」**整项移出**：
+  范围、边界（数据驱动骨架 + 一条 5 步主线 + 侧边卡片描边 + `data-tour` 标靶）、
+  前端改动面与验收门槛随迁；迁移零新增——完成态走 `preferences` JSONB 加键）。
+- [x] 十三章收窄：章题去「新手教程」；边界 7 / 13.4 的 P9-7 行 / 验收门槛 10 删除线
+  处理并留指针（P9-8 编号保留，批次不再复用 P9-7）；13.3 教程条目移入 19.0。
+- [x] 15.1 补 P13 零新增依赖行（「六个阶段合计」→「七个阶段合计」）；15.2 里程碑表
+  M11 交付物去教程、补 M14 行（与主计划 12.1 表一致）。
+- [x] 主计划新增「十七、P13」指针章 + 头部说明 / 路线图 ASCII / 9.8 / 12.1 里程碑表
+  同步。
+- [x] 本文件标题与头部归属、章节映射说明扩为 P6–P13。
+- [x] 文件更名 `DEVELOPMENT_PLAN_P6-P12.md` → `DEVELOPMENT_PLAN_P6-P13.md`（随 P13
+  立项，同 15.4 / 15.7 更名先例）；全仓活指针同步，历史记录中的旧文件名保留原文
+  （15.7 那条纪律沿用）。
+
+### 15.9 P14 立项并入本文件（2026-09-16 完成）
+
+- [x] 新增二十章 P14 — 项目可见性两层 + 权限申请审批流（**13.7 后置增补转正**：
+  取向六条与现状锚点原样随迁 20.0 并扩编为范围 / 边界 / 迁移示意 / 路由示意 /
+  改动面 / 批次与门槛；13.7 原位改为转正指针，正文不再重复维护）。
+- [x] 13.0「后置增补之二」段落去「不排期」口径，补 P14 指针。
+- [x] 15.1 补 P14 零新增依赖行（「七个阶段合计」→「八个阶段合计」）；15.2 里程碑表
+  补 M15 行（与主计划 12.1 表一致）。
+- [x] 主计划新增「十八、P14」指针章 + 头部说明 / 路线图 ASCII / 12.1 里程碑表同步。
+- [x] 本文件标题与头部归属、章节映射说明扩为 P6–P14。
+- [x] 文件更名 `DEVELOPMENT_PLAN_P6-P13.md` → `DEVELOPMENT_PLAN_P6-P14.md`（随 P14
+  立项，同 15.4 / 15.7 / 15.8 更名先例）；全仓活指针同步，历史记录中的旧文件名保留
+  原文（15.7 那条纪律沿用）。
+
+---
 
 ## 十六、P11 — 资产归属（谁创建 / 谁更新，列级 + 审计级，约 1.5 周）
 
@@ -2319,7 +3252,9 @@ POST   /api/v1/notifications/read-all                   全部已读
 
 **边界决策（10 项）**
 
-1. **一个迁移：`056_p11_ownership.sql`**。14 张表各
+1. **一个迁移：`060_p11_ownership.sql`**（原 056，2026-09-11 因 P8 占用 055/056、
+   P9 占用 057 顺延为 058；2026-09-14 再被 P9-4 修订的 058 与 P9-4b 的 059 占用，
+   顺延为 060）。14 张表各
    `ADD COLUMN IF NOT EXISTS created_by / updated_by UUID REFERENCES users(id) ON DELETE SET NULL`。
    旧行 NULL 即可（项目未发布，无历史包袱，不回填——「数据兼容」纪律的正用）。
    索引只建 `(project_id, created_by)` 不建 updated_by：按创建人筛选是列表诉求，
@@ -2356,7 +3291,7 @@ POST   /api/v1/notifications/read-all                   全部已读
 10. **不做版本历史/diff/回滚**——那是 P10 14.3 的范围（「接口变更追踪」），本阶段只
     回答归属，不回答内容演变。P7 11.0 边界 16 已把同一件事归到那里。
 
-### 16.1 数据库迁移：056_p11_ownership.sql（示意）
+### 16.1 数据库迁移：060_p11_ownership.sql（示意；原 056，2026-09-11 顺延 058、2026-09-14 再顺延 060）
 
 ```sql
 -- 14 张表同一模式，旧行 NULL 即可（不回填；项目未发布无历史包袱）
@@ -2373,7 +3308,7 @@ CREATE INDEX IF NOT EXISTS endpoints_project_created_by_idx ON endpoints(project
 
 | 项 | 方案 A | 方案 B | 触点 |
 | --- | --- | --- | --- |
-| 迁移 | 1 个文件，28 列 + 14 索引 | 0（复用 audit_logs） | `migrations/056_*.sql` |
+| 迁移 | 1 个文件，28 列 + 14 索引 | 0（复用 audit_logs） | `migrations/060_*.sql` |
 | INSERT | ~22 处写 created_by | ~22 处挂 create 审计 | routes/*.ts（14）+ mcpToolsWrite*（7）+ ingest.ts + lib/scripts.ts |
 | UPDATE | ~23 处写 updated_by | ~23 处挂 update 审计 | 同上 + caseSync / schedule / suiteMembers / alerts（系统路径除外，边界 3） |
 | DELETE | —（不记列） | ~14 处挂 delete 审计 | routes/*.ts + mcpToolsWrite* |
@@ -2382,7 +3317,7 @@ CREATE INDEX IF NOT EXISTS endpoints_project_created_by_idx ON endpoints(project
 
 ### 16.3 分批交付
 
-- **P11-1（第一批，方案 A）**：迁移 056 + 全部 INSERT/UPDATE 触点写 user + mapper 加
+- **P11-1（第一批，方案 A）**：迁移 060 + 全部 INSERT/UPDATE 触点写 user + mapper 加
   字段 + 11 个列表加列。验收：任一核心资源创建后能在列表看到创建人；换人编辑后
   更新人变化；系统路径（调度改 next_run_at）不显示人。
 - **P11-2（第二批，方案 B）**：AUDIT_ACTIONS 扩 42 动作 + 全写路径挂审计（成功后
@@ -2402,3 +3337,440 @@ CREATE INDEX IF NOT EXISTS endpoints_project_created_by_idx ON endpoints(project
 - 不做「按人筛选全部资产」的全局视图（P8 统计阶段的候选，有诉求再立项）。
 - 不给 12 张已带 created_by 的表批量补 updated_by（等真实诉求）。
 - 不在审计 detail 里记 payload 值或字段前后值（既有纪律，护栏已在 `lib/audit.ts`）。
+
+## 十七、后置：产物下载侧转发（P4.5 边界 14 修订，2026-09-11 用户确认，未排期）
+
+> 自 `DEVELOPMENT_PLAN.md` 8.4 迁入（主计划过大，扩编文档承载后续事项——同 15.4/15.5 的
+> 并入方向）。原「硬约束：平台永不代理大文件流」条目保留在主计划 8.4，以本节修订为准。
+
+**背景**：双域名部署（办公网页面域名 A / 内网 API 域名 B）下，办公网浏览器不可达 MinIO
+端点。dev 一直在用 s3 驱动（`apitest-server/.env` `ARTIFACT_STORAGE_DRIVER=s3`，MinIO 由
+compose 起），本地没炸只是因为浏览器可达本地端点；公司部署时 s3 驱动的浏览器下载直链
+（presigned URL 直指 `ARTIFACT_S3_ENDPOINT`，不经 B）当天即断。四条数据路径只有这一条断：
+Runner 上传（`presignPut`）内网仍可直传，`reportPayload` 服务端读取与 `objectExists` 都是
+API 主机 → MinIO，不受影响。
+
+**方案（已定，未排期）**：下载侧改走平台路由——
+
+- `presignGet` 对 s3 驱动也返回 fs 同款平台直链 `/runner/artifacts/:key/download`（token
+  签 key + 过期，`signFsToken` 与驱动无关，机制复用）；
+- 下载 handler 按驱动分流：fs 读磁盘流回（现状），s3 从 MinIO `GetObject` 流式转吐——
+  pipe 不缓冲，Content-Length / Content-Disposition 改由平台头下发（不再靠 S3 签名参数）；
+- 上传保持 presigned 直传不动，平台不进上传数据路径。
+
+**边界 14 修订**：硬约束收窄为「**上传**不代理；下载侧允许流式转发」。原条目担忧的
+「200MB allure 报告占住一个 Node 进程」改由流式纪律（恒定内存、不 Buffer 整个对象）与
+带宽成本回应，不再一票否决。
+
+**临时退路**：实现落地前如需先上公司环境，把该环境 `ARTIFACT_STORAGE_DRIVER` 临时切回
+`fs`（零代码，产物落 API 主机磁盘，直链即 B 的 API 路由），落地后切回 s3。
+
+技术细节与双域名同族问题全量盘点见 `issue_fix/问题记录-通知reportUrl双域名部署失效.md`。
+
+---
+
+## 十八、P12 — 个人中心 + 用户级 MCP Token（约 2 周）
+
+> 版本: v1.0（2026-09-14 立项，范围与边界已确认；尚未实现）。
+
+### 18.0 P12 范围与边界（2026-09-14 确认）
+
+**问题**
+
+三个散落的「用户级」缺口，一件事把它们串起来——平台所有跟「我这个人」有关的界面
+和凭据都没有一个落点：
+
+1. **MCP Token 是项目级**（迁移 050：`mcp_tokens.project_id NOT NULL`，scope 挂在
+   token 上），57 个工具全部隐式读 `identity.projectId`。有 A、B 两项目权限的用户，
+   agent 在 A 的会话里够不到 B 的接口——「把 B 的接口复制进 A 的流程」无法在一个
+   窗口完成。理论上可以配两个 MCP server 各拿一把 token，但两套同名工具多数客户端
+   处理不了，实际不可用。
+2. **平台没有个人中心**。改密只有 `POST /auth/change-password` 一个端点（入口在 P9
+   助手的账号指令里，页面无）；P9-4b 的用户级 agent 凭据明确写着「个人信息界面另行
+   规划」（13.0 修订 2）；MCP Token 升级为用户级后同样需要归宿。
+3. **通知「查看全部」是孤立全局路由**（`/notifications`，铃铛下拉跳转）。改密、
+   通知、凭据散在三处，「我的」这个维度在导航里不存在。
+
+**现状盘点（2026-09-14 摸底）**
+
+- `mcp_tokens`（050）：`project_id` + `scope` 都在 token 行上；无绑定表。
+- 鉴权 `lib/mcpAuth.ts`：`McpIdentity = { tokenId, projectId, scope, createdBy }`，
+  单项目；候选集按 `token_prefix` 部分索引收窄 + scrypt 比对（这条机制本阶段**原样
+  保留**）。
+- 闸门 `routes/mcp.ts` 四道：token → 401、`mcp_enabled` → 404、scope → -32601、
+  写/执行按签发人重跑 `canAccess` → 403。**read 工具不重跑 `canAccess`**——签发人
+  被移出项目后 read token 仍可读，直到吊销或关闸（本阶段顺手收掉这个缺口）。
+- 工具面 57 个（`MCP_TOOLS`），SQL 一律 `WHERE project_id = identity.projectId`，
+  项目是身份的一部分而不是参数。
+- REST `routes/mcpTokens.ts`：项目级三条（列表/签发/吊销）+ 工具清单一条；
+  签发要求项目 write。
+- 前端：`McpPage.tsx`（项目侧管理页）、`BellMenu.tsx` + `NotificationsPage.tsx`
+  （全局路由 `/notifications`）、用户菜单只有登出。
+- P9-4b（未实现）：用户级 agent 凭据的界面落点悬置，等个人信息界面。
+
+**两个层次（都做，分两批）**
+
+- **方案 A — 用户级 MCP Token**：token 归人、绑定归项目、scope 放绑定上，工具面
+  按参数选项目。**改写 P5 9.1/9.3 的 token 形状口径**（项目级 → 用户级 + 绑定）。
+- **方案 B — 个人中心**：全局层 `/me` 页，集齐改密 / 通知查看全部 / MCP Token /
+  agent 凭据挂点（P9-4b 的落点）。
+
+**边界决策（12 项）**
+
+1. **一个迁移：`060_p12_personal_mcp.sql`**（迁移号顺延：057/057b/058 归 P9、059
+   归 P11，下一个空位 060）。`mcp_tokens` `DROP COLUMN project_id / scope`——项目
+   未发布、无历史数据要保护（「数据兼容」纪律的正用），**既有 dev token 全部作废
+   重签，不搬数**；新表 `mcp_token_projects` 承接绑定（见 18.1）。
+   `mcp_tokens_prefix_idx` 部分索引与吊销即时生效的机制一行不动。
+2. **scope 放绑定上，不放 token 上**。一把 token 绑 N 个项目时「A 可写、B 只读」
+   必须可表达；token 本体无 scope，写权限的爆炸半径不再随绑定数线性增长。
+   `normalizeScopes` 的 read 恒在归一（现 `mcpTokens.ts`）原样搬到绑定侧。
+3. **绑定是过滤器，不是授权**。绑定时刻要求实时角色匹配：read 绑定需该项目 read、
+   write/execute 绑定需该项目 write；调用时刻**每次**重跑 `canAccess(owner, 目标
+   项目)`——**read 也查**（收掉现状盘点里的缺口）。owner 被删（`created_by`
+   `ON DELETE SET NULL`）= 整把 token 失效，不再有「无主 read token」。
+4. **`mcp_enabled` 仍是项目总闸**（404），语义从「每连接」变「每调用按目标项目」。
+   项目侧新增**解绑权**：项目管理员可踢掉任何人绑到本项目的 token——签发权上移到
+   用户后，项目管理员对「谁的开门钥匙能开我这扇门」的最终控制不丢。
+5. **工具面 57 个签名全部加必填 `projectId` 参数**，SQL 的 `identity.projectId`
+   全部换成该参数（`isUuid` + 绑定集成员校验，与既有校验同款报错形状）。未绑定
+   项目的调用回 `-32601`——与「工具不存在」刻意同形（P5 验收门槛 1 的纪律延续：
+   不泄露「那个项目存在 MCP 通道」）。新增两个工具：`list_my_projects`（read，
+   agent 运行时自查可触达项目与各自 scope——`tools/list` 回不了这个答案）与
+   `copy_endpoint`（write，跨项目复制的便捷通道：from 项目读 + to 项目建，一处
+   事务语义）。工具面上限 57 → **59**。
+6. **闸门重排为五道**（`routes/mcp.ts`）：① token 有效 → 401（不变）；② tools/call
+   从参数取目标项目，**未绑定 → -32601**（不看 mcp_enabled——绑定关系与开关状态
+   都不泄露）；③ `mcp_enabled(目标项目)` → 404（不变，每调用判）；④ 有效 scope =
+   该绑定的 scope，工具不在集 → -32601；⑤ 写/执行按 owner 重跑 `canAccess` →
+   403。`tools/list` 的注册裁剪按全部绑定的 scope **并集**（能力面按并集展示，
+   放不放行逐调用判——单项目裁剪会让绑了 5 个项目的 agent 看到五份重复清单）。
+7. **REST 面整体挪用户级**：`/api/v1/me/mcp/tokens` 五条 + 项目侧绑定两条（见
+   18.3）；原 `/projects/:id/mcp/tokens` 三条删除，`/projects/:id/mcp/tools`
+   保留。签发/吊销从「项目 write」改为「本人」——写权限的控制点从签发移到绑定
+   （边界 3/4），纪律等价。
+8. **审计动作扩两个**：`mcp_token.create` 改挂用户级（无 projectId）；
+   新增 `mcp_token.bind` / `mcp_token.unbind`（detail 记项目与 scope——绑定的影响
+   面就是「外部 agent 的读写执行通道各开了哪些门」）；`mcpCallRejected` 的 detail
+   补目标项目。明文与哈希仍不进审计（既有纪律）。
+9. **个人中心是全局层页面**（路由 `/me`，与项目管理、数据看板同层，不进项目壳），
+   入口在右上角用户菜单。**四个 tab**：基本信息（email/姓名只读 + 改密表单，复用
+   既有 `/auth/change-password` 端点零改动）/ 通知（`NotificationsPage` 迁入为
+   `/me/notifications`，组件与逻辑不动只换挂载点；通知四条路由与五个生产源**零
+   改动**，只挪查看入口）/ MCP Token（列表 + 签发弹窗 + 绑定管理 + `/mcp` 端点地址
+   展示）/ agent 凭据（P9-4b 落点——**本阶段只留 tab 占位不实现**，P9-4b 实现时
+   挂进来）。
+10. **自助改名 / 改邮箱 / 注销不做**（P6 systemUsers 管理面已有，个人中心不复制
+    admin 能力）；**通知生产端与收件口径不动**（P9-1 定案）。
+11. **跨项目「引用」不做**：流程节点直接指向另一项目的接口是流程模型改动（跨项目
+    外键、执行时 RBAC、B 侧撤权后 A 的流程语义），与 token 形状无关，有诉求另行
+    立项。本阶段交付的跨项目能力 = **复制**（`copy_endpoint` 或 get + create 组合）。
+12. **ingest / runner token 不跟**：它们是机器凭据，语义就是「某项目的上报/执行
+    通道」，项目级是对的；只有 MCP token 是「人的代理通道」，跟人走。三种凭据
+    前缀（`apitrack_` / `apirunner_` / `apimcp_`）刻意不同，本阶段不合并。
+
+### 18.1 数据库迁移：060_p12_personal_mcp.sql（示意）
+
+```sql
+-- token 本体：项目归属与 scope 移除（既有行不搬——未发布无包袱，重签即重签）
+ALTER TABLE mcp_tokens DROP COLUMN IF EXISTS project_id;
+ALTER TABLE mcp_tokens DROP COLUMN IF EXISTS scope;
+
+-- 绑定表：token × 项目 × scope（scope 在这里，见边界 2）
+CREATE TABLE IF NOT EXISTS mcp_token_projects (
+  token_id   UUID NOT NULL REFERENCES mcp_tokens(id) ON DELETE CASCADE,
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  scope      TEXT[] NOT NULL DEFAULT '{read}',   -- 'read' / 'write' / 'execute'，read 恒在
+  bound_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (token_id, project_id)
+);
+CREATE INDEX IF NOT EXISTS mcp_token_projects_project_idx ON mcp_token_projects (project_id);
+-- mcp_tokens_prefix_idx（050）原样保留：前缀收窄候选集 + 排除吊销行，鉴权热路径不变
+```
+
+### 18.2 改动面摸底（立项时点）
+
+| 层 | 改动 | 触点 |
+| --- | --- | --- |
+| 鉴权 | `McpIdentity` 改 `{ tokenId, owner, bindings }`；前缀收窄查询不变，绑定集随候选行一次带回 | `lib/mcpAuth.ts` |
+| 闸门 | 四道 → 五道重排（边界 6），目标项目从工具参数取 | `routes/mcp.ts` |
+| 工具面 | 57 个签名 + SQL 的 `identity.projectId` → 参数 `projectId`；新增 2 个 | `lib/mcpTools*.ts`（9 个文件） |
+| REST | 用户级五条 + 项目侧两条；项目级三条删除 | `routes/mcpTokens.ts`（重写） |
+| 审计 | create 改形 + bind / unbind 两动作 + 拒绝审计补项目 | `lib/audit.ts` + 各路由 |
+| mapper | `mapMcpToken` 去 project/scope、加 bindings 数组；新增绑定行映射 | `models/types.ts` |
+| 前端 | 个人中心新页四 tab + McpPage 降级 + 铃铛迁址 + i18n | 见 18.4 |
+| e2e | MCP 用例全量补 `projectId` 参数 + 跨项目新例 | `apitest-e2e-python` |
+
+### 18.3 API 面（新增 / 改写）
+
+```
+# 个人中心（全局层，无项目前缀）
+GET    /api/v1/me/profile                                   # 基本信息（/auth/me 聚合别名）
+POST   /api/v1/auth/change-password                         # 既有端点零改动，前端补页面入口
+GET    /api/v1/me/bindable-projects                         # canAccess 项目集 + 每项目 scope 上限
+GET    /api/v1/me/mcp/tokens                                # 本人 token 列表（含绑定数组）
+POST   /api/v1/me/mcp/tokens                                # 签发（name；明文只在响应出现一次）
+DELETE /api/v1/me/mcp/tokens/:tokenId                       # 吊销（软删留审计）
+POST   /api/v1/me/mcp/tokens/:tokenId/bindings              # 绑定（projectId + scope ≤ 实时角色）
+DELETE /api/v1/me/mcp/tokens/:tokenId/bindings/:projectId   # 本人解绑
+
+# 项目侧（降级为只读 + 解绑）
+GET    /api/v1/projects/:id/mcp/bindings                    # 本项目全部绑定（谁的 token / scope / last_used_at）
+DELETE /api/v1/projects/:id/mcp/bindings/:tokenId           # 项目管理员解绑（write）
+GET    /api/v1/projects/:id/mcp/tools                       # 保留（工具清单展示）
+
+# 删除：GET / POST / DELETE /projects/:id/mcp/tokens（能力上移 /me）
+
+# 通知（/api/v1/notifications* 四条零改动，仅前端迁入个人中心 tab）
+```
+
+### 18.4 前端
+
+- **`MePage.tsx`**（全局层路由 `/me`，四 tab，Quiet Console 同款 page-card 形态）：
+  基本信息（只读 + 改密表单）/ 通知（`NotificationsPage` 迁入为 `/me/notifications`，
+  组件不动）/ MCP Token（签发弹窗 + 绑定管理，从 `McpPage.tsx` 演化）/ agent 凭据
+  （占位 tab，文案「随助手凭据功能开放」）。
+- **`McpPage.tsx` 降级**：签发区删除，改只读绑定表（绑定人 / scope / last_used_at）
+  + 解绑按钮；`mcp_enabled` 开关留在项目设置（总闸语义不变）；工具清单区保留。
+- **入口与迁址**：右上角用户菜单加「个人中心」；`BellMenu` 的「查看全部」改跳
+  `/me/notifications`；`GlobalApp` 注册 `/me/*` 路由；旧 `/notifications` 路由删除
+  （未发布无包袱，不留兼容跳转）。
+- i18n 中英两区补个人中心 / 绑定管理 / 迁址词条。
+
+### 18.5 实施顺序（P12-1 / P12-2）
+
+- **P12-1（后端整批）**：迁移 060 + `mcpAuth` 身份改造 + 闸门五道重排 + 57 工具
+  `projectId` 参数化 + `list_my_projects` / `copy_endpoint` + REST 全套 + 审计 +
+  e2e 用例改造。**一批做完的理由**：身份形状一改，工具面不跟着改则 `/mcp` 直接
+  不可用，中间态没有交付价值。
+  验收：一把 token 绑 A(write) + B(read)——`list_my_projects` 可见两项目与各自
+  scope；B 的 `get_endpoint` 通、B 的 `create_endpoint` 拒（-32601 形状）；
+  `copy_endpoint` B→A 通；解绑 B 后 B 的读也拒；A 关 `mcp_enabled` 后 A 全 404；
+  owner 被移出 B 后 B 的读拒（read 活体复查，缺口收口）；owner 被删后整把
+  token 401；吊销后 401（无缓存窗口，延续 050 门槛）。
+- **P12-2（前端整批）**：`MePage` 四 tab + `McpPage` 降级 + 铃铛迁址 + 用户菜单
+  入口 + i18n。
+  验收：个人中心改密后旧密码失效、新密码可登录；通知 tab 的全量分页 / 未读筛选 /
+  全部已读 / 行点击深链与迁址前逐项一致；MCP tab 走完签发 → 绑定 → 项目侧可见 →
+  项目侧解绑全链路；项目侧再无签发入口。
+
+### 18.6 里程碑
+
+| 里程碑 | 阶段 | 交付物 | 验收标准 |
+| --- | --- | --- | --- |
+| M13 | P12 | 个人中心 + 用户级 MCP Token | 一把 token 跨项目（A 写 B 读同一会话完成）；个人中心集齐改密/通知查看全部/MCP Token/agent 凭据挂点；项目侧绑定可见可踢；吊销/解绑/关闸/降权即时生效 |
+
+### 18.7 明确不做
+
+- 跨项目「引用」（流程节点指向另一项目的接口）——流程模型改动，另行立项。
+- 自助改名 / 改邮箱 / 注销账号（admin 面已有，不复制）。
+- 通知生产端与收件口径的任何改动（P9-1 定案，只挪查看入口）。
+- ingest / runner token 的用户级化（机器凭据，项目级是对的）。
+- token 级 scope（已移到绑定上，不存在「一把万能写 token」）。
+- agent 凭据 tab 的实现（P9-4b 的范围，本阶段只留占位）。
+
+---
+
+## 十九、P13 — 新手教程（自 P9 移出）
+
+> 版本: v1.0（2026-09-16 立项：P9-7「教程骨架 + 主线 5 步 + 双 i18n」自 P9 整项
+> 移出，用户确认；尚未实现）。
+
+### 19.0 P13 范围与边界（口径自 P9 边界 7 / 13.3 / 门槛 10 原样随迁）
+
+**定位**
+
+原 P9 的新手教程项（P9-7），2026-09-16 用户确认移出单独立项。P9 主体（人物 /
+聊天 / 通知）已实现至 P9-6，教程与助手链路无相互依赖，不阻塞 P9 收尾；selector
+的前置——页面定型（当初把它排进 P9 的理由，见主计划 9.8）——在 P7/P8 落地后
+已满足。
+
+**范围（原 P9-7 整项）**
+
+- **教程骨架（数据驱动）**：`{ route, selector, i18nKey }[]` JSON +
+  `preferences.onboarding` 记完成态——零迁移（`preferences` 是 JSONB 合并，
+  `routes/system.ts` 既有机制，加键零成本）。
+- **一条 5 步主线**：登录 → 建项目 → 建接口 → 跑一次 → 看报告。只做这一条。
+- **双 i18n**：步骤文案中英双语，复用既有 i18n 键机制。
+
+**边界（自 P9 边界 7 随迁）**
+
+1. **数据驱动 + 一条主线**：本阶段只做**一条 5 步主线**——selector 只对定型页面
+   写。交互用**侧边卡片 + 目标元素描边**（不用遮罩高亮——那要处理滚动跟随与定位
+   计算，两倍复杂度一倍价值）。`data-tour` 属性标靶点（CSS 类重构不破坏教程）。
+2. **首登自动触发**：`preferences.onboarding.mainDone` 记完成态，完成后不再弹。
+
+**前端改动面（自 P9 13.3 随迁）**
+
+- `lib/tour.ts` + `TourCard.tsx`（侧边卡片 + `data-tour` 描边）+ 一条主线的
+  步骤 JSON（双 i18n）。首登自动触发（`preferences.onboarding.mainDone`）。
+
+**验收门槛（自 P9 门槛 10 随迁）**
+
+1. 主线教程 5 步全程无「目标元素找不到」的卡死（找不到自动跳步）。
+2. 首登自动触发；完成后 `preferences.onboarding.mainDone` 置位，二次登录不再弹。
+
+### 19.1 实施批次
+
+| 步 | 内容 | 产出 | 状态 |
+| --- | --- | --- | --- |
+| P13-1 | 教程骨架 + 主线 5 步 + 双 i18n（原 P9-7 整项） | 新用户引导可用 | |
+
+### 19.2 里程碑
+
+| 里程碑 | 阶段 | 交付物 | 验收标准 |
+| --- | --- | --- | --- |
+| M14 | P13 | 新手教程（自 P9-7 移出） | 主线教程 5 步全程无「目标元素找不到」的卡死（找不到自动跳步）；首登自动触发且完成态可记（`preferences.onboarding.mainDone`）；双 i18n |
+
+### 19.3 明确不做
+
+- 多分支教程 / 多主线（先证明一条主线有人走完）。
+- 教程进度落服务端表（`preferences` JSONB 够用）。
+- 教程编辑器 / 后台可配步骤（骨架 JSON 直接改文件）。
+- 遮罩高亮式引导（P9 边界 7 原判：滚动跟随与定位计算，两倍复杂度一倍价值）。
+
+---
+
+## 二十、P14 — 项目可见性两层 + 权限申请审批流（自 13.7 转正）
+
+> 版本: v1.0（2026-09-16 立项：13.7 后置增补（2026-09-07 提出）转正排期，用户
+> 确认；尚未实现）。
+
+### 20.0 P14 范围与边界（取向自 13.7 原样随迁，扩编为完整口径）
+
+**定位**
+
+原十三章的后置增补（13.7，2026-09-07 提出，当时「记录取向不排期」），2026-09-16
+用户确认排期为 P14。当初后置的两个理由现已兑现：**触达靠站内信**——P9 通知中心
+（`lib/inbox.ts` + 铃铛）已落地；**审批流复用成员管理**——P6-4 成员 upsert +
+`granted_by` + `member.upsert` 审计已落地。本阶段是把已记录的取向接上已就位的地基。
+
+**现状锚点**（2026-09-16 复核，行号随 P8-8 拆轻后移）
+
+`queryProjectMetrics`（`routes/dashboard.ts:42`，非管理员的
+`EXISTS(user_project_roles)` 过滤在 `:57`）与 P8-8 拆出的 `queryProjectList`
+（同文件，给 `/projects` 的轻查询）都是同一口径——非成员在项目列表 / 数据看板 /
+项目切换器**完全看不到**非成员项目（不是「看得到进不去」），URL 直达
+`GET /projects/:id` 由 `requireProjectAccess`（`lib/rbac.ts:46`）回 403。发现层的
+缺失正是动因：连项目存在都不知道，「找谁要权限」无从谈起——成员页展示管理员清单的
+前提是先进得了项目（P6-4 的产品理由只覆盖了已进项目的 viewer）。
+
+**范围**
+
+- **可见性拆两层，指标不随身份外泄**：项目身份（名称 / 描述）对全部登录用户可见；
+  接口数 / 通过率等指标仍只对成员计算与下发，看板聚合的分母不含非成员项目——
+  「看得到」买到的是发现，不是数据。
+- **无权限落地页**：非成员 URL 直达项目时不再是裸 403——身份级端点回 200（项目名 +
+  管理员线索），前端渲染「无权限 + 申请入口」落地页。这是审批流的 UX 前置，也是
+  `requireProjectAccess` 之外唯一要开的口子。
+- **审批流复用成员管理，不开第二条写路径**：新表 `access_requests`；**批准 = 现有
+  成员 upsert**（`granted_by` 落审批人，`member.upsert` 审计照旧），拒绝只记状态。
+  P6-4 成员页的人工添加与 P6-3 邀请码通道照旧——审批流是用户主动的自助通道，
+  不是唯一通道。
+- **触达靠站内信**：新申请 → 通知全体 project_admin；审批结果 → 通知申请人。
+- **幂等**：同一 (project, user) 只允许一条 pending；被拒后可再申请（第一版不限流）。
+
+**边界决策**
+
+1. **指标不随身份外泄**（随迁取向 1）：`/projects` 与 dashboard 对非成员下发的是
+   身份级字段（名称 / 描述 / 「是否成员」标记），任何资产计数与执行指标仍走成员
+   过滤；`/stats/*` 的可见项目集口径不变（P8-4 的 `resolveScope`）。
+2. **`requireProjectAccess` 之外唯一开口 = 身份级端点**（随迁取向 2）：新端点只回
+   项目身份 + 管理员线索，不回任何项目内容；其余全部项目级端点维持 403 原样。
+3. **批准 = 既有成员 upsert**（随迁取向 3）：不写第二条「加成员」路径，`granted_by`
+   落审批人、`member.upsert` 审计照旧；管理员也可在审批时改定角色后批准。
+4. **人工添加与邀请码通道照旧**（随迁取向 3）：审批流是自助通道，不是唯一通道。
+5. **通知只发 project_admin**（随迁取向 4 的收窄）：`deliverInbox` 是全体成员扇出，
+   申请通知需按角色过滤——`lib/inbox.ts` 加 project_admin 定向投递（或给
+   `deliverInbox` 加 role 过滤参数），第一版不引入「可配置审批人」。
+6. **幂等与再申请**（随迁取向 5）：partial unique index 保证单 pending；被拒后可
+   立即再申请，第一版不限流、不做冷却。
+7. **实施时再定的开口**（随迁取向 6）：申请是否带建议角色（管理员可改后批准）；
+   非成员可见的管理员线索到什么粒度（email / 仅姓名）；项目切换器是否列出带锁的
+   非成员项目（**倾向不列**——切换器是「进入」的入口，目录页才是「发现」的入口）。
+
+**数据库迁移：`063_p14_access_requests.sql`（示意；编号以实施时最新空位为准——
+2026-09-16 已用至 062，P11/P12 章内的 060 示意已被 P9 的 058–062 实占，两章实施时
+各自顺延，P14 排在其后）**
+
+```sql
+CREATE TABLE IF NOT EXISTS access_requests (
+  id UUID PRIMARY KEY,
+  project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  suggested_role TEXT CHECK (suggested_role IN ('project_admin','developer','viewer')),  -- NULL = 未带建议（边界 7 开口）
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','approved','rejected')),
+  handled_by UUID REFERENCES users(id) ON DELETE SET NULL,
+  handled_at TIMESTAMPTZ,
+  note TEXT NOT NULL DEFAULT '',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX access_requests_pending_uniq
+  ON access_requests (project_id, user_id) WHERE status = 'pending';  -- 边界 6：单 pending
+
+-- 站内信 kind 扩一个 'access_request'（057 的 CHECK 是列级匿名约束，PG 默认名
+-- notifications_kind_check；drop + 重建，六值全集）
+ALTER TABLE notifications DROP CONSTRAINT notifications_kind_check;
+ALTER TABLE notifications ADD CHECK (kind IN ('member_change', 'plan_assign', 'alert',
+  'suite_result', 'ci_result', 'access_request'));
+```
+
+**路由（示意）**
+
+```
+# 可见性两层（身份级端点——requireProjectAccess 之外唯一开口，边界 2）
+GET  /projects/:id/identity          # 登录即可访问：项目名/描述 + 管理员线索（粒度边界 7）
+# /projects 列表对非成员追加身份级条目（无任何指标字段；形状实施时定——扩既有
+#   queryProjectList 的外层 WHERE，还是独立目录端点）
+
+# 审批流（新表 access_requests）
+POST /projects/:id/access-requests   # 非成员提交申请（已有 pending → 409，幂等边界 6）
+GET  /projects/:id/access-requests   # project_admin：本项目申请列表（含待审/历史）
+GET  /access-requests/me             # 本人跨项目的申请与状态（全局层，无项目前缀）
+POST /access-requests/:id/approve    # project_admin：批准 = 既有成员 upsert（角色可在
+                                     #   批准时改定，granted_by = 审批人，边界 3）
+POST /access-requests/:id/reject     # project_admin：拒绝只记状态（handled_by/at）
+```
+
+**改动面摸底**
+
+| 处 | 改动 | 说明 |
+| --- | --- | --- |
+| `routes/dashboard.ts` | `queryProjectList` 外层 WHERE 拆两层（身份全量 / 指标成员过滤） | `queryProjectMetrics` 不动——它只服务已进项目的看板 |
+| `routes/projects.ts` + 新 `routes/accessRequests.ts` | 身份级端点 + 审批流 REST 五条 | 批准复用 `routes/members.ts` 的 upsert 路径 |
+| `lib/inbox.ts` | project_admin 定向投递（新函数或 `deliverInbox` 加 role 过滤） | `InboxKind` 扩 `'access_request'` |
+| `lib/rbac.ts` | 不动（身份级端点不走 `requireProjectAccess`，边界 2） | — |
+| 前端 | 无权限落地页（项目名 + 管理员线索 + 申请入口）+ 成员页「权限申请」tab（审批列表）+ `/me` 或项目目录的「我的申请」入口 + i18n 双区 | 落地页在 P14-1 先上「找管理员」降级态，P14-2 接申请入口 |
+
+**验收门槛**
+
+1. 非成员在项目列表能看到非成员项目的名称 / 描述，看不到任何指标；看板聚合的
+   分母不含非成员项目（P8 口径零回归）。
+2. 非成员 URL 直达项目渲染「无权限」落地页（不再是裸 403），落地页可见管理员线索。
+3. 申请 → 全体 project_admin 收到站内信；批准 / 拒绝 → 申请人收到结果站内信，
+   深链可达对应页面。
+4. 批准后申请人即获所批角色，成员页与 `member.upsert` 审计口径与人工添加一致。
+5. 同一 (project, user) 只有一条 pending（重复提交 409）；被拒后可再申请。
+6. 既有通道回归：P6-3 邀请码注册、P6-4 成员页人工添加行为不变。
+
+### 20.1 实施批次
+
+| 步 | 内容 | 产出 | 状态 |
+| --- | --- | --- | --- |
+| P14-1 | 可见性两层 + 无权限落地页（`queryProjectList` 拆层 + 身份级端点 + 前端列表/落地页；**零迁移**，落地页先上「找管理员」降级态） | 发现层可用：看得到、进不去有落地页 | |
+| P14-2 | 审批流（迁移 063 + `access_requests` REST + inbox 定向投递 + 前端申请入口/审批 tab/我的申请） | 自助申请闭环 | |
+
+### 20.2 里程碑
+
+| 里程碑 | 阶段 | 交付物 | 验收标准 |
+| --- | --- | --- | --- |
+| M15 | P14 | 项目可见性两层 + 权限申请审批流（自 13.7 转正） | 非成员可见项目身份（名称/描述）但任何指标不可见，看板聚合分母不含非成员项目；URL 直达渲染「无权限」落地页而非裸 403；申请→站内信通知 project_admin→批准（走既有成员 upsert）/拒绝→结果通知申请人全程闭环；同一 (project, user) 只有一条 pending |
+
+### 20.3 明确不做
+
+- 指标对非成员开放（任何形态的「预览数据」——看得到 ≠ 数据，取向 1 的红线）。
+- 第二条成员写路径（批准只走既有成员 upsert，取向 3）。
+- 邮件 / 站外触达（站内信够用，P9 未引 SMTP 的口径不变）。
+- 可配置审批人 / 多级审批（第一版固定 project_admin 全体）。
+- 申请限流 / 冷却（被拒可立即再申请，取向 5）。
+- 项目切换器列非成员项目（倾向不列，边界 7 的开口随实施定，默认不做）。
